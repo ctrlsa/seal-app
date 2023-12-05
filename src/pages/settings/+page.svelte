@@ -1,6 +1,3 @@
-<script>
-</script>
+<main class="flex-1 overflow-y-scroll px-3">
 
-<svelte:head>
-  <title>Settings</title>
-</svelte:head>
+</main>

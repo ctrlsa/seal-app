@@ -4,12 +4,12 @@
   import { page } from "$app/stores";
 
   const paths = [
-    { name: Folder, className: "h-6 w-6", path: "/index" },
-    { name: Settings, className: "h-8 w-8", path: "/settings" }
+    { name: Folder, className: "h-6 w-6", path: "/myfiles" },
+    { name: Settings, className: "h-7 w-7", path: "/settings" }
   ];
 </script>
 
-<nav class="container btm-nav btm-nav-md mx-auto">
+<nav class="btm-nav btm-nav-sm sticky bottom-0 z-50">
   {#each paths as { name, className, path }}
     {@const active = $page.url.pathname === path ? "page" : null}
     {@const activeClass = $page.url.pathname === path ? "text-primary" : null}
@@ -19,6 +19,3 @@
     </a>
   {/each}
 </nav>
-
-<style>
-</style>

@@ -3,8 +3,8 @@
   import NavbarBottom from "$widgets/navbar-bottom.svelte";
 </script>
 
-<Navbar title={"Settings"} />
-<div class="relative">
-  <slot />
-</div>
+<Navbar>Settings</Navbar>
+
+<slot />
+
 <NavbarBottom />

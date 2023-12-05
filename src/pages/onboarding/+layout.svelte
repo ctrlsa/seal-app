@@ -1,5 +1,5 @@
 <script>
-  /** Redirect to appropriate page */
+  import toast from "svelte-french-toast";
   import { isEmpty } from "moderndash";
   import { get } from "svelte/store";
   import { goto } from "$app/navigation";
@@ -7,8 +7,10 @@
   import { wallet } from "$lib/lib/stores.js";
 
 
-  /** Redirect to "My Files" page if user account exists */
   if (!isEmpty(get(wallet))) {
+    toast("User account already exists", { icon: '😨' });
     goto("/myfiles", { replaceState: true });
   }
 </script>
+
+<slot />
