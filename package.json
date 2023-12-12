@@ -40,6 +40,7 @@
 	"dependencies": {
 		"@glif/filecoin-address": "^2.0.43",
 		"@lighthouse-web3/sdk": "^0.2.9",
+		"@tabler/icons-svelte": "^2.44.0",
 		"@twa-dev/sdk": "^6.9.1",
 		"axios": "^1.6.2",
 		"blo": "^1.1.1",
@@ -47,6 +48,7 @@
 		"dexie": "^3.2.4",
 		"ethers": "^6.9.0",
 		"lucide-svelte": "^0.294.0",
+		"mime": "^4.0.0",
 		"moderndash": "^3.9.0",
 		"nanoid": "^5.0.4",
 		"svelte-copy": "^1.4.1",

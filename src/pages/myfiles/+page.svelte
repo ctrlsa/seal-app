@@ -7,6 +7,7 @@
   import toast, { Toaster } from "svelte-french-toast";
   import InfiniteLoading from "svelte-infinite-loading";
   import { Copy, XCircle, Info, Plus, SortAsc, Share2 } from "lucide-svelte";
+  import { IconFileTypePdf, IconFile } from "@tabler/icons-svelte";
 
   import { db } from "$shared/lib/db";
   import { nanoid } from "$shared/lib/nanoid";
@@ -287,8 +288,14 @@
             <div class="flex-none w-24 h-24 shrink-0 grow-0">
               {#if mimeType.startsWith("image/")}
                 <img class="object-cover w-24 h-24 rounded-xl" src="{url}" alt="{name}">
+              {:else if mimeType.startsWith("application/pdf")}
+                <div class="flex w-24 h-24 rounded-xl bg-base-300 justify-center items-center">
+                  <IconFileTypePdf size={48} stroke={1.2} class="w-20 h-20 shrink-0 text-error" />
+                </div>
               {:else}
-                <div class="skeleton w-24 h-24 shrink-0"></div>
+                <div class="flex w-24 h-24 rounded-xl bg-base-300 justify-center items-center">
+                  <IconFile size={48} stroke={1.2} class="w-20 h-20 shrink-0" />
+                </div>
               {/if}
             </div>
 
