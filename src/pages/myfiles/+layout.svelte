@@ -1,5 +1,4 @@
 <script>
-  import { SortAsc } from "lucide-svelte";
   import { wallet } from "$shared/lib/stores";
 
   import Navbar from "$widgets/navbar.svelte";

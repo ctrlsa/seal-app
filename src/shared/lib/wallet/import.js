@@ -18,7 +18,7 @@ export async function importWallet(key, type = "mnemonic") {
   // Convert to Filecoin f410 address
   const filAddress = newDelegatedEthAddress(ethWallet.address).toString();
 
-  if (importType === "mnemonic") {
+  if (type === "mnemonic") {
     mnemonic = ethWallet.mnemonic.phrase;
   }
 
@@ -32,11 +32,10 @@ export async function importWallet(key, type = "mnemonic") {
 
   // Store new user wallet
   wallet.set(newWallet);
-  console.log(newWallet);
 }
 
-function fromMnemonic(mnemonicPhrase) {
-  return ethers.Wallet.fromPhrase(mnemonicPhrase.toString().trim());
+function fromMnemonic(mnemonic) {
+  return ethers.Wallet.fromPhrase(mnemonic.toString().trim());
 }
 
 function fromPrivateKey(privateKey) {

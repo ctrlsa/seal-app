@@ -1,14 +1,3 @@
 <script>
-  /** Redirect to appropriate page */
-  import { isEmpty } from "moderndash";
-  import { get } from "svelte/store";
-  import { goto } from "$app/navigation";
 
-  import { wallet } from "$lib/lib/stores.js";
-
-
-  /** Redirect to "My Files" page if user account exists */
-  if (!isEmpty(get(wallet))) {
-    goto("/myfiles", { replaceState: true });
-  }
 </script>

@@ -3,13 +3,22 @@
   import { goto } from "$app/navigation";
 
   import { importWallet } from "$lib/lib/wallet/import.js";
+  import { isEmpty } from "moderndash";
+  import { get } from "svelte/store";
+  import { wallet } from "$lib/lib/stores.js";
+  import { setupStorageProvider } from "$lib/lib/storageProvider/setupProvider.js";
 
 
   let importType = "mnemonic";
-  let keyElement;
+  let keyInput;
 
   async function restoreAccount() {
-    await importWallet(keyElement, importType);
+    await importWallet(keyInput, importType);
+
+    // Setup storage provider for a new wallet (request API key)
+    if (!isEmpty(get(wallet))) {
+      await setupStorageProvider($wallet.publicKey, $wallet.privateKey);
+    }
 
     toast.success("Account restored");
 
@@ -40,7 +49,7 @@
     </div>
   </div>
   <div class="grid grid-cols-1 mt-3">
-    <textarea bind:value={keyElement} class="textarea textarea-bordered textarea-md w-full h-28"></textarea>
+    <textarea bind:value={keyInput} class="textarea textarea-bordered textarea-md w-full h-28"></textarea>
   </div>
   <div class="grid grid-cols-1 mt-3">
     <button class="btn btn-primary" on:click={restoreAccount}>Import</button>

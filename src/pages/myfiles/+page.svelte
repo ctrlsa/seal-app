@@ -1,25 +1,24 @@
 <script>
-  import { Copy, Forward, XCircle, Info, Plus, SortAsc } from "lucide-svelte";
   import { onMount } from "svelte";
   import { copy } from "svelte-copy";
-  import { isEmpty } from "moderndash";
-  import { inview } from 'svelte-inview';
-  import toast, { Toaster } from "svelte-french-toast";
-  import lighthouse from "@lighthouse-web3/sdk";
   import { liveQuery } from "dexie";
+  import { inview } from "svelte-inview";
+  import lighthouse from "@lighthouse-web3/sdk";
+  import toast, { Toaster } from "svelte-french-toast";
   import InfiniteLoading from "svelte-infinite-loading";
+  import { Copy, XCircle, Info, Plus, SortAsc, Share2 } from "lucide-svelte";
 
   import { db } from "$shared/lib/db";
-  import { storageProvider } from "$shared/lib/stores";
-  import { syncUploads } from "$lib/lib/storageProvider/syncUploads.js";
-  import { UploadStatus } from "$shared/lib/enums/uploadStatus.js";
   import { nanoid } from "$shared/lib/nanoid";
+  import { ITEMS_PER_PAGE } from "$lib/lib/constants";
+  import { storageProvider } from "$shared/lib/stores";
+  import { UploadStatus } from "$shared/lib/enums/uploadStatus";
+  import { getUploadsCount, syncUploads } from "$lib/lib/storageProvider/syncUploads";
 
   import StackedList from "$lib/ui/list/stacked.svelte";
   import StackedListItem from "$lib/ui/list/stackedItem.svelte";
   import UploadButton from "$lib/ui/button/upload.svelte";
   import ModalConfirm from "$lib/ui/modal/modal.svelte";
-  import { get } from "svelte/store";
 
 
   // Storage provider main data
@@ -32,7 +31,6 @@
 
   // Pagination:
   let page = 1;
-  let itemsPerPage = 2000;
 
   // Query parameters:
   let searchQuery = "";
@@ -57,17 +55,28 @@
   // Upload button visible/hidden state
   $: uploadButtonVisible = fileListElementY < 100 || fileListElementScrollDirection === "down";
   // Items offset for the files table query of a IndexedDB
-  $: offset = itemsPerPage * (page-1);
+  $: offset = ITEMS_PER_PAGE * (page-1);
 
 
   onMount(() => {
-    const syncFiles = async () => {
-      await syncUploads(storageProviderApiKey);
-    }
+    db.files.count().then(async function (results) {
+      //console.log(results);
 
-    if (isEmpty(get(files))) {
-      syncFiles();
-    }
+      if (results === 0) {
+        const uploadsCount = await getUploadsCount(storageProviderApiKey);
+        //console.log(uploadsCount);
+
+        if (uploadsCount > 0) {
+          const sfPromise = syncUploads(storageProviderApiKey);
+
+          await toast.promise(sfPromise, {
+            loading: "Syncing file list",
+            success: "File list was synchronized",
+            error: "Could not synchronize file list"
+          });
+        }
+      }
+    });
   });
 
   const handleFileInputChange = async (event) => {
@@ -222,7 +231,7 @@
     // Return a paged result
     return await collection
       .offset(offset)
-      .limit(itemsPerPage)
+      .limit(ITEMS_PER_PAGE)
       .toArray();
   });
 </script>
@@ -323,7 +332,7 @@
                   <button
                     class="btn btn-sm btn-neutral"
                     use:copy={url} on:svelte-copy="{() => toast.success(`File URL copied`)}">
-                    <Forward class="h-4 w-4" />Share
+                    <Share2 class="h-4 w-4" />Share
                   </button>
                   <button class="btn btn-sm btn-error" on:click={deleteFile(id)}>
                     <XCircle class="h-4 w-4" />

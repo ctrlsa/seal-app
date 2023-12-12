@@ -14,6 +14,7 @@
     {@const active = $page.url.pathname === path ? "page" : null}
     {@const activeClass = $page.url.pathname === path ? "text-primary" : null}
     {@const activeBgClass = $page.url.pathname === path ? "bg-neutral" : null}
+
     <a aria-current={active} href={path} class={activeBgClass}>
       <svelte:component this={name} class="{className} {activeClass}" />
     </a>

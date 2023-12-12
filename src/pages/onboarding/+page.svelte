@@ -14,16 +14,17 @@
   /** Create new user account (wallet) */
   async function createNewAccount() {
     if (isEmpty(get(wallet))) {
-      await createNewWallet();
+      await toast.promise(createNewWallet(), {
+        loading: "Creating new account...",
+        success: "New account created",
+        error: "Could not create a new account"
+      });
     } else {
       toast.error("Account already exists");
       return;
     }
 
-    // Toast some noise
-    toast.success("New account created");
-
-    goto("/myfiles", { replaceState: true });
+    await goto("/myfiles", { replaceState: true });
   }
 
   /** Go to restore account page */

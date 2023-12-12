@@ -2,11 +2,13 @@
   import { twMerge } from "tailwind-merge";
   import { fly } from 'svelte/transition';
 
+
   export let value = "";
   export let files = undefined;
   export let defaultClass = "btn btn-primary btn-square rounded-[12px] fixed z-9 right-3 bottom-16 flex flex-col shrink-0 justify-around align-middle text-center shadow-md w-14 h-14";
 
   let fileInput;
+
 
   function keydown(event) {
     if ([" ", "Enter"].includes(event.key)) {

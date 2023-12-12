@@ -1,13 +1,13 @@
 <script>
-  import toast from 'svelte-french-toast';
+  import toast from "svelte-french-toast";
   import { Wallet } from "lucide-svelte";
-  import { copy, copyText } from 'svelte-copy';
+  import { copy, copyText } from "svelte-copy";
+
+  import { shortAddr } from "$shared/lib/wallet/utils";
+
 
   export let address="";
 
-  function shortAddr(addr) {
-    return addr.substring(0, 6) + "..." + addr.substring(addr.length - 4);
-  }
 
   function copyOnKeypress(event) {
     if (event.keyCode === 13 || event.keyCode === 32) {
