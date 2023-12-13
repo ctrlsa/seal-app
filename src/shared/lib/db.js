@@ -1,7 +1,9 @@
 import Dexie from "dexie";
 
-export const db = new Dexie("Seal");
+Dexie.delete("Seal");
 
-db.version(2).stores({
+export const db = new Dexie("SealDB");
+
+db.version(1).stores({
     files: "id, cid, pid, name, size, mimeType, status, encryption, created, updated, protocol, storageProvider, txHash, publicKey, url"
 });

@@ -1,4 +1,4 @@
-import lighthouse from "@lighthouse-web3/sdk";
+import { getUploads } from "@lighthouse-web3/sdk";
 
 import { db } from "$lib/lib/db";
 import { nanoid } from "$lib/lib/nanoid";
@@ -11,13 +11,13 @@ const storageProviderGatewayUrl = storageProviders.lighthouse.gatewayUrl;
 
 
 export async function getUploadsCount(apiKey) {
-  const uploads = await lighthouse.getUploads(apiKey);
+  const uploads = await getUploads(apiKey);
 
   return uploads.data.totalFiles;
 }
 
 export async function syncUploads(apiKey){
-  const fileList = await lighthouse.getUploads(apiKey);
+  const fileList = await getUploads(apiKey);
   //console.log(fileList.data.totalFiles);
 
   // Add files to the database

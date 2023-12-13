@@ -1,5 +1,5 @@
 import axios from "axios";
-import lhp from "@lighthouse-web3/sdk";
+import { getApiKey } from "@lighthouse-web3/sdk";
 import { ethers } from "ethers";
 
 import { TIMEOUT } from "$lib/lib/constants";
@@ -20,7 +20,7 @@ export async function setupStorageProvider(publicKey, privateKey, store = true) 
   }
 
   /** Get the API key from Lighthouse provider */
-  const getApiKey = async(pubKey, privKey) => {
+  const getApi = async(pubKey, privKey) => {
     const res = (
       await axios.get(
         provider.verifyUrl + pubKey, { timeout: TIMEOUT }
@@ -31,7 +31,7 @@ export async function setupStorageProvider(publicKey, privateKey, store = true) 
       const verificationMessage = res.data;
 
       const signedMessage = await signAuthMessage(privKey, verificationMessage);
-      const response = await lhp.getApiKey(pubKey, signedMessage);
+      const response = await getApiKey(pubKey, signedMessage);
 
       return response.data.apiKey;
     } else {
@@ -41,7 +41,7 @@ export async function setupStorageProvider(publicKey, privateKey, store = true) 
   }
 
   try {
-    provider.apiKey = await getApiKey(publicKey, privateKey);
+    provider.apiKey = await getApi(publicKey, privateKey);
   } catch (e) {
     throw new Error("Could not get a API key");
   }

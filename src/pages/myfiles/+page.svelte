@@ -3,7 +3,7 @@
   import { copy } from "svelte-copy";
   import { liveQuery } from "dexie";
   import { inview } from "svelte-inview";
-  import lighthouse from "@lighthouse-web3/sdk";
+  import { upload } from "@lighthouse-web3/sdk";
   import toast, { Toaster } from "svelte-french-toast";
   import InfiniteLoading from "svelte-infinite-loading";
   import { Copy, XCircle, Info, Plus, SortAsc, Share2 } from "lucide-svelte";
@@ -163,17 +163,12 @@
     // Both file and folder are supported by upload function
     // Third parameter is for multiple files, if multiple files are to be uploaded at once make it true
     // Fourth parameter is the deal parameters, default null
-    const output = await lighthouse.upload(file, apiKey, false, null, progressCallback);
+    const output = await upload(file, apiKey, false, null, progressCallback);
 
     uploadProgress = 0;
-    console.log(output.data);
+    //console.log(output.data);
 
     if (output.data && output.data.Hash) {
-/*      console.log(
-        "Visit at https://gateway.lighthouse.storage/ipfs/" +
-        output.data[0].Hash
-      );*/
-
       return output.data;
     }
 
@@ -225,9 +220,6 @@
         await deleteFile(file.id);
       }
     }
-
-    //const response = await lighthouse.getUploads(storageProviderApiKey);
-    //console.log(response);
 
     // Return a paged result
     return await collection
@@ -286,8 +278,10 @@
         <StackedListItem>
           <div class="flex w-full gap-x-3">
             <div class="flex-none w-24 h-24 shrink-0 grow-0">
-              {#if mimeType.startsWith("image/")}
+              {#if mimeType.startsWith("image/gif")}
                 <img class="object-cover w-24 h-24 rounded-xl" src="{url}" alt="{name}">
+              {:else if mimeType.startsWith("image/")}
+                <img class="object-cover w-24 h-24 rounded-xl" src="{url}?h=256&w=256" alt="{name}">
               {:else if mimeType.startsWith("application/pdf")}
                 <div class="flex w-24 h-24 rounded-xl bg-base-300 justify-center items-center">
                   <IconFileTypePdf size={48} stroke={1.2} class="w-20 h-20 shrink-0 text-error" />
