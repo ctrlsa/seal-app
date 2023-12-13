@@ -11,9 +11,6 @@ dependencies:
   '@lighthouse-web3/sdk':
     specifier: ^0.2.9
     version: 0.2.9
-  '@tabler/icons-svelte':
-    specifier: ^2.44.0
-    version: 2.44.0(svelte@4.2.8)
   '@twa-dev/sdk':
     specifier: ^6.9.1
     version: 6.9.1(react@18.2.0)
@@ -32,9 +29,6 @@ dependencies:
   ethers:
     specifier: ^6.9.0
     version: 6.9.0
-  lucide-svelte:
-    specifier: ^0.294.0
-    version: 0.294.0(svelte@4.2.8)
   mime:
     specifier: ^4.0.0
     version: 4.0.0
@@ -69,10 +63,10 @@ dependencies:
 devDependencies:
   '@sveltejs/adapter-static':
     specifier: ^2.0.3
-    version: 2.0.3(@sveltejs/kit@1.29.1)
+    version: 2.0.3(@sveltejs/kit@1.30.1)
   '@sveltejs/kit':
-    specifier: ^1.29.1
-    version: 1.29.1(svelte@4.2.8)(vite@4.5.1)
+    specifier: ^1.30.1
+    version: 1.30.1(svelte@4.2.8)(vite@4.5.1)
   autoprefixer:
     specifier: ^10.4.16
     version: 10.4.16(postcss@8.4.32)
@@ -115,6 +109,12 @@ devDependencies:
   svelte-check:
     specifier: ^3.6.2
     version: 3.6.2(postcss@8.4.32)(svelte@4.2.8)
+  svelte-lucide:
+    specifier: ^0.8.2
+    version: 0.8.2(svelte@4.2.8)
+  svelte-tabler:
+    specifier: ^0.6.3
+    version: 0.6.3(svelte@4.2.8)
   tailwindcss:
     specifier: ^3.3.6
     version: 3.3.6
@@ -895,16 +895,16 @@ packages:
     engines: {node: '>= 8'}
     dev: false
 
-  /@sveltejs/adapter-static@2.0.3(@sveltejs/kit@1.29.1):
+  /@sveltejs/adapter-static@2.0.3(@sveltejs/kit@1.30.1):
     resolution: {integrity: sha512-VUqTfXsxYGugCpMqQv1U0LIdbR3S5nBkMMDmpjGVJyM6Q2jHVMFtdWJCkeHMySc6mZxJ+0eZK3T7IgmUCDrcUQ==}
     peerDependencies:
       '@sveltejs/kit': ^1.5.0
     dependencies:
-      '@sveltejs/kit': 1.29.1(svelte@4.2.8)(vite@4.5.1)
+      '@sveltejs/kit': 1.30.1(svelte@4.2.8)(vite@4.5.1)
     dev: true
 
-  /@sveltejs/kit@1.29.1(svelte@4.2.8)(vite@4.5.1):
-    resolution: {integrity: sha512-zbHS6hy2OZLWTmkTktx7jpPaE5Qg9tk3li+wh06ISSLEYeiPrLlPMuhzmI2gM5d6ParNfDx7YCiPTeRr23IpMw==}
+  /@sveltejs/kit@1.30.1(svelte@4.2.8)(vite@4.5.1):
+    resolution: {integrity: sha512-N4hMFTRmnkB0q1uB93wfM8As2q4zYI2FQ01K8dQOCAWbm2y6mB0pmF12ILO+zbEim13csBLO0JyAWJRSd101hQ==}
     engines: {node: ^16.14 || >=18}
     hasBin: true
     requiresBuild: true
@@ -966,19 +966,6 @@ packages:
     transitivePeerDependencies:
       - supports-color
     dev: true
-
-  /@tabler/icons-svelte@2.44.0(svelte@4.2.8):
-    resolution: {integrity: sha512-aEaYhxwix8ciP/lt1vAOVpyKHf9IYYmGJI+R2ITqi7J26kSsfG3OxMqMgtmqpHdTnetM2Agdix/Ld5OlujQ6Gg==}
-    peerDependencies:
-      svelte: '>=3 <5'
-    dependencies:
-      '@tabler/icons': 2.44.0
-      svelte: 4.2.8
-    dev: false
-
-  /@tabler/icons@2.44.0:
-    resolution: {integrity: sha512-WPPtihDcAwEm1QZM9MXQw6+r/R2/qx7KMU1eegsi9DsqBLAb0W2kbt6e/syvd6j9c+6XNpRVBW1ziGqSWQAWOg==}
-    dev: false
 
   /@twa-dev/sdk@6.9.1(react@18.2.0):
     resolution: {integrity: sha512-R+3a/IRG97NFHS1PF+rj/F2n+cwsHtW1LWGVP0pzIzMK709oMy00qJPV0wxbS16hzcvcW9hPVNwHYTPMv4rrEQ==}
@@ -1191,7 +1178,7 @@ packages:
       postcss: ^8.1.0
     dependencies:
       browserslist: 4.22.2
-      caniuse-lite: 1.0.30001568
+      caniuse-lite: 1.0.30001570
       fraction.js: 4.3.7
       normalize-range: 0.1.2
       picocolors: 1.0.0
@@ -1306,7 +1293,7 @@ packages:
     engines: {node: ^6 || ^7 || ^8 || ^9 || ^10 || ^11 || ^12 || >=13.7}
     hasBin: true
     dependencies:
-      caniuse-lite: 1.0.30001568
+      caniuse-lite: 1.0.30001570
       electron-to-chromium: 1.4.611
       node-releases: 2.0.14
       update-browserslist-db: 1.0.13(browserslist@4.22.2)
@@ -1347,8 +1334,8 @@ packages:
     engines: {node: '>= 6'}
     dev: true
 
-  /caniuse-lite@1.0.30001568:
-    resolution: {integrity: sha512-vSUkH84HontZJ88MiNrOau1EBrCqEQYgkC5gIySiDlpsm8sGVrhU7Kx4V6h0tnqaHzIHZv08HlJIwPbL4XL9+A==}
+  /caniuse-lite@1.0.30001570:
+    resolution: {integrity: sha512-+3e0ASu4sw1SWaoCtvPeyXp+5PsjigkSt8OXZbF9StH5pQWbxEjLAZE3n8Aup5udop1uRiKA7a4utUk/uoSpUw==}
     dev: true
 
   /chalk@4.1.2:
@@ -2678,14 +2665,6 @@ packages:
     dependencies:
       yallist: 4.0.0
 
-  /lucide-svelte@0.294.0(svelte@4.2.8):
-    resolution: {integrity: sha512-jqQDL9bfZm3DzEhulRdPWWw88qQpS/w/fDAdgTsYXjij5I81HYFFxbDHpnSHes2oH9Eri5M3QQDgqV9xtqkyig==}
-    peerDependencies:
-      svelte: '>=3 <5'
-    dependencies:
-      svelte: 4.2.8
-    dev: false
-
   /magic-string@0.27.0:
     resolution: {integrity: sha512-8UnnX2PeRAPZuN12svgR9j7M1uWMovg/CEnIwIG0LFkXSJJe4PdfUGiTGl8V9bsBHFUtfVINcSyYxd7q+kx9fA==}
     engines: {node: '>=12'}
@@ -3630,6 +3609,14 @@ packages:
       svelte: 4.2.8
     dev: false
 
+  /svelte-lucide@0.8.2(svelte@4.2.8):
+    resolution: {integrity: sha512-PHLH0/IHDjvGUqM7KgHfEsAEmNzPaLbqp4gcQdpQVAnQKQcpwURoF/J+6rqtHwbwsmuNL4RNOrkz6DcDRbwm9Q==}
+    peerDependencies:
+      svelte: ^3.54.0 || ^4.0.0
+    dependencies:
+      svelte: 4.2.8
+    dev: true
+
   /svelte-persisted-store@0.7.0(svelte@4.2.8):
     resolution: {integrity: sha512-PczYS60ysScQ0DmTCPXQm5rwt8FfQzSlx0lCbljbE6hTCKqXaw2bP8KH1+B7QTPmuiy/QbAk4pjYpNCmZhjyRw==}
     engines: {node: '>=0.14'}
@@ -3685,6 +3672,14 @@ packages:
       strip-indent: 3.0.0
       svelte: 4.2.8
       typescript: 5.3.3
+    dev: true
+
+  /svelte-tabler@0.6.3(svelte@4.2.8):
+    resolution: {integrity: sha512-YRAsznRtTvLJZx6MtbzaBlG9TCkGvLwd/3/uc3ZVYkxi4OMLbgTUpQnLWrURRKjy2VI1BJOBpBh+lxqsIn4Hxw==}
+    peerDependencies:
+      svelte: ^3.54.0 || ^4.0.0
+    dependencies:
+      svelte: 4.2.8
     dev: true
 
   /svelte-writable-derived@3.1.0(svelte@4.2.8):

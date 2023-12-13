@@ -1,7 +1,8 @@
 <script>
-  import toast from "svelte-french-toast";
-  import { Wallet } from "lucide-svelte";
   import { copy, copyText } from "svelte-copy";
+  import toast from "svelte-french-toast";
+
+  import Wallet from "svelte-lucide/Wallet.svelte";
 
   import { shortAddr } from "$shared/lib/wallet/utils";
 

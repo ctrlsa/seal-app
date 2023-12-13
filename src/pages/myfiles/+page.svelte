@@ -6,8 +6,15 @@
   import { upload } from "@lighthouse-web3/sdk";
   import toast, { Toaster } from "svelte-french-toast";
   import InfiniteLoading from "svelte-infinite-loading";
-  import { Copy, XCircle, Info, Plus, SortAsc, Share2 } from "lucide-svelte";
-  import { IconFileTypePdf, IconFile } from "@tabler/icons-svelte";
+
+  /** Icons */
+  import ArrowDownWideNarrow from "svelte-lucide/ArrowDownWideNarrow.svelte";
+  import Info from "svelte-lucide/Info.svelte";
+  import Plus from "svelte-lucide/Plus.svelte";
+  import Share2 from "svelte-lucide/Share2.svelte";
+  import XCircle from "svelte-lucide/XCircle.svelte";
+  import File from "svelte-tabler/File.svelte";
+  import FileTypePdf from "svelte-tabler/FileTypePdf.svelte";
 
   import { db } from "$shared/lib/db";
   import { nanoid } from "$shared/lib/nanoid";
@@ -242,7 +249,7 @@
             on:click|preventDefault={() => {dropdownSortOpen = !dropdownSortOpen}}
             on:keyup|preventDefault={() => {dropdownSortOpen = !dropdownSortOpen}}
           >
-            <SortAsc class="h-6 w-6" />
+            <ArrowDownWideNarrow class="h-6 w-6" />
           </summary>
           <div tabindex="-1" id="dropdownSort" class="menu dropdown-content z-[1] p-2 shadow bg-base-100 rounded-box mt-4">
             <div tabindex="-1" class="form-control">
@@ -284,11 +291,11 @@
                 <img class="object-cover w-24 h-24 rounded-xl" src="{url}?h=256&w=256" alt="{name}">
               {:else if mimeType.startsWith("application/pdf")}
                 <div class="flex w-24 h-24 rounded-xl bg-base-300 justify-center items-center">
-                  <IconFileTypePdf size={48} stroke={1.2} class="w-20 h-20 shrink-0 text-error" />
+                  <FileTypePdf size={48} strokeWidth={1.5} class="w-20 h-20 shrink-0 text-error" />
                 </div>
               {:else}
                 <div class="flex w-24 h-24 rounded-xl bg-base-300 justify-center items-center">
-                  <IconFile size={48} stroke={1.2} class="w-20 h-20 shrink-0" />
+                  <File size={48} strokeWidth={1.5} class="w-20 h-20 shrink-0" />
                 </div>
               {/if}
             </div>

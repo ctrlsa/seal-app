@@ -5,7 +5,13 @@
   import { copy, copyText } from "svelte-copy";
   import toast from "svelte-french-toast";
   import { goto } from "$app/navigation";
-  import { Copy, CloudLightning, Share2, Wallet, XCircle } from "lucide-svelte";
+
+  /** Icons */
+  import Copy from "svelte-lucide/Copy.svelte";
+  import CloudLightning from "svelte-lucide/CloudLightning.svelte";
+  import Share2 from "svelte-lucide/Share2.svelte";
+  import Wallet from "svelte-lucide/Wallet.svelte";
+  import XCircle from "svelte-lucide/XCircle.svelte";
 
   import { db } from "$lib/lib/db";
   import { wallet, storageProvider } from "$lib/lib/stores";

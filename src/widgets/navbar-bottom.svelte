@@ -1,5 +1,6 @@
 <script>
-  import { Folder, Settings } from "lucide-svelte";
+  import Folder from "svelte-lucide/Folder.svelte";
+  import Settings from "svelte-lucide/Settings.svelte";
 
   import { page } from "$app/stores";
 
