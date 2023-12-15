@@ -1,6 +1,7 @@
 <script>
   import "../app.css";
 
+  import { onMount } from "svelte";
   import WebApp from "@twa-dev/sdk";
   import toast, { Toaster } from "svelte-french-toast";
 
@@ -19,9 +20,8 @@
       });
     });*/
 
-
   /** Telegram Web app init & expand */
-  onNavigate(() => {
+  onMount(() => {
     WebApp.ready();
   });
 
