@@ -10,5 +10,3 @@
 <Navbar address={address}>My Files</Navbar>
 
 <slot />
-
-<NavbarBottom />

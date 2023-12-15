@@ -13,20 +13,19 @@
   import Plus from "svelte-lucide/Plus.svelte";
   import Share2 from "svelte-lucide/Share2.svelte";
   import XCircle from "svelte-lucide/XCircle.svelte";
-  import File from "svelte-tabler/File.svelte";
-  import FileTypePdf from "svelte-tabler/FileTypePdf.svelte";
 
   import { db } from "$shared/lib/db";
   import { nanoid } from "$shared/lib/nanoid";
-  import { ITEMS_PER_PAGE } from "$lib/lib/constants";
+  import { ITEMS_PER_PAGE } from "$shared/lib/constants";
   import { storageProvider } from "$shared/lib/stores";
-  import { UploadStatus } from "$shared/lib/enums/uploadStatus";
-  import { getUploadsCount, syncUploads } from "$lib/lib/storageProvider/syncUploads";
+  import { uploadStatus } from "$shared/lib/enums/uploadStatus";
+  import { getUploadsCount, syncUploads } from "$shared/lib/storageProvider/syncUploads";
 
-  import StackedList from "$lib/ui/list/stacked.svelte";
-  import StackedListItem from "$lib/ui/list/stackedItem.svelte";
-  import UploadButton from "$lib/ui/button/upload.svelte";
-  import ModalConfirm from "$lib/ui/modal/modal.svelte";
+  import StackedList from "$shared/ui/list/stacked.svelte";
+  import StackedListItem from "$shared/ui/list/stackedItem.svelte";
+  import UploadButton from "$shared/ui/button/upload.svelte";
+  import confirmAction from "$shared/ui/modal/confirmAction.svelte";
+  import FilePreview from "./ui/filePreview.svelte";
 
 
   // Storage provider main data
@@ -104,7 +103,7 @@
         name: file.name,
         size: file.size,
         mimeType: file.type,
-        status: UploadStatus.PENDING,
+        status: uploadStatus.PENDING,
         encryption: false,
         created: dateNow,
         updated: dateNow,
@@ -128,7 +127,7 @@
     for (let i = 0; i < filesToUpload.length; i++) {
       try {
         await db.files.update(filesToUpload[i].id, {
-          "status": UploadStatus.UPLOADING
+          "status": uploadStatus.UPLOADING
         });
 
         const uploadResponse = await uploadFile([event.target.files.item(i)], storageProviderApiKey);
@@ -137,20 +136,20 @@
           await db.files.update(filesToUpload[i].id, {
             cid: uploadResponse.Hash,
             size: uploadResponse.Size,
-            status: UploadStatus.QUEUED,
+            status: uploadStatus.QUEUED,
             updated: Date.now(),
             url: storageProviderGatewayUrl + uploadResponse.Hash
           });
         } catch (e) {
           await db.files.update(filesToUpload[i].id, {
-            "status": UploadStatus.FAILED
+            "status": uploadStatus.FAILED
           });
 
           console.error(e);
         }
       } catch (e) {
         await db.files.update(filesToUpload[i].id, {
-          "status": UploadStatus.FAILED
+          "status": uploadStatus.FAILED
         });
 
         console.error(e);
@@ -182,15 +181,25 @@
     return output;
   }
 
+  async function confirmDelete(id) {
+    confirmAction();
+
+    if (true === confirmed) {
+
+    }
+  }
+
   const deleteFile = async (id) => {
     //confirmDelete.showModal();
 
-    try {
+    console.log(id);
+
+/*    try {
       await db.files.delete(id);
       toast.success("File deleted");
     } catch (e) {
       console.error(e);
-    }
+    }*/
   }
 
   const setStatus = async (id, status) => {
@@ -223,7 +232,7 @@
     let allFiles = await db.files.toArray();
 
     for (const file of allFiles) {
-      if (file.status === UploadStatus.DELETED) {
+      if (file.status === uploadStatus.DELETED) {
         await deleteFile(file.id);
       }
     }
@@ -285,19 +294,7 @@
         <StackedListItem>
           <div class="flex w-full gap-x-3">
             <div class="flex-none w-24 h-24 shrink-0 grow-0">
-              {#if mimeType.startsWith("image/gif")}
-                <img class="object-cover w-24 h-24 rounded-xl" src="{url}" alt="{name}">
-              {:else if mimeType.startsWith("image/")}
-                <img class="object-cover w-24 h-24 rounded-xl" src="{url}?h=256&w=256" alt="{name}">
-              {:else if mimeType.startsWith("application/pdf")}
-                <div class="flex w-24 h-24 rounded-xl bg-base-300 justify-center items-center">
-                  <FileTypePdf size={48} strokeWidth={1.5} class="w-20 h-20 shrink-0 text-error" />
-                </div>
-              {:else}
-                <div class="flex w-24 h-24 rounded-xl bg-base-300 justify-center items-center">
-                  <File size={48} strokeWidth={1.5} class="w-20 h-20 shrink-0" />
-                </div>
-              {/if}
+              <FilePreview mimeType={mimeType} url={url} alt={name} />
             </div>
 
             <div class="flex flex-1 flex-col w-16">
@@ -316,13 +313,13 @@
               </div>
 
               <div class="flex flex-1 w-full h-5">
-                {#if status === UploadStatus.PENDING}
+                {#if status === uploadStatus.PENDING}
                   <span class="loading loading-ring loading-sm"></span>
-                {:else if status === UploadStatus.UPLOADING}
+                {:else if status === uploadStatus.UPLOADING}
                   <progress class="progress w-full" value="{uploadProgress}" max="100"></progress>
-                {:else if status === UploadStatus.FAILED}
+                {:else if status === uploadStatus.FAILED}
                   <div class="badge badge-error badge-outline mt-1">Upload error</div>
-                {:else if status === UploadStatus.QUEUED || status === UploadStatus.STORED}
+                {:else if status === uploadStatus.QUEUED || status === uploadStatus.STORED}
                   <p
                     class="truncate text-ellipsis overflow-hidden text-xs text-gray-500 whitespace-nowrap leading-5 mt-1"
                     use:copy={cid} on:svelte-copy="{() => toast.success("CID copied")}"
@@ -333,7 +330,7 @@
               </div>
 
               <div class="flex w-full grow justify-end items-end gap-x-2">
-                {#if status === UploadStatus.QUEUED || status === UploadStatus.STORED}
+                {#if status === uploadStatus.QUEUED || status === uploadStatus.STORED}
                   <button class="btn btn-sm btn-ghost">
                     <Info class="h-4 w-4" />
                   </button>
@@ -342,14 +339,14 @@
                     use:copy={url} on:svelte-copy="{() => toast.success(`File URL copied`)}">
                     <Share2 class="h-4 w-4" />Share
                   </button>
-                  <button class="btn btn-sm btn-error" on:click={deleteFile(id)}>
+                  <button class="btn btn-sm btn-error" on:click={confirmDelete(id)}>
                     <XCircle class="h-4 w-4" />
                   </button>
                 {:else}
-                  {#if status === UploadStatus.PENDING || status === UploadStatus.UPLOADING}
-                    <button class="btn btn-neutral btn-sm" on:click={setStatus(id, UploadStatus.DELETED)}><XCircle class="h-4 w-4" />Cancel</button>
-                  {:else if status === UploadStatus.FAILED}
-                    <button class="btn btn-sm btn-error" on:click={deleteFile(id)}>
+                  {#if status === uploadStatus.PENDING || status === uploadStatus.UPLOADING}
+                    <button class="btn btn-neutral btn-sm" on:click={setStatus(id, uploadStatus.DELETED)}><XCircle class="h-4 w-4" />Cancel</button>
+                  {:else if status === uploadStatus.FAILED}
+                    <button class="btn btn-sm btn-error" on:click={confirmDelete(id)}>
                       <XCircle class="h-4 w-4" />Delete
                     </button>
                   {/if}
@@ -371,13 +368,4 @@
       <Plus class="h-8 w-8 text-white" />
     </UploadButton>
   {/if}
-
-  <ModalConfirm id="confirmDelete">
-    <h3 class="font-bold text-lg" slot="header">Delete file?</h3>
-    <p>Confirm the file deletion</p>
-    <div slot="footer">
-      <button class="btn btn-error" on:click={() => confirmDelete.close(1)}>Delete</button>
-      <button class="btn" on:click={() => confirmDelete.close()}>Cancel</button>
-    </div>
-  </ModalConfirm>
 </main>

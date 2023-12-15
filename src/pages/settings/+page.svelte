@@ -90,7 +90,7 @@
 </script>
 
 <main class="flex-1 overflow-y-scroll px-3">
-  <div class="mb-10">
+  <div class="mb-8">
     <p class="text-xl font-bold mb-2">My account</p>
 
     {#if !isEmpty($wallet)}

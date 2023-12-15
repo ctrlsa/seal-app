@@ -7,7 +7,7 @@
  * REJECTED: file rejected by storage provider
  * DELETED: marked for deletion (local)
  */
-export const UploadStatus = {
+export const uploadStatus = {
   PENDING: "pending",
   UPLOADING: "uploading",
   QUEUED: "queued",

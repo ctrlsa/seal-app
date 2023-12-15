@@ -7,25 +7,34 @@
 
   import { goto, onNavigate } from "$app/navigation";
 
+  import { handleUITheme } from "$shared/lib/theme";
 
-/*  /!** Global app transitions *!/
-  onNavigate((navigation) => {
-    if (!document.startViewTransition) return;
 
-    return new Promise((resolve) => {
-      document.startViewTransition(async () => {
-        resolve();
-        await navigation.complete;
+
+  /*  /!** Global app transitions *!/
+    onNavigate((navigation) => {
+      if (!document.startViewTransition) return;
+
+      return new Promise((resolve) => {
+        document.startViewTransition(async () => {
+          resolve();
+          await navigation.complete;
+        });
       });
-    });
-  });*/
+    });*/
+
 
   /** Telegram Web app init & expand */
-  onMount(() => {
+  onNavigate(() => {
     WebApp.ready();
+  });
+
+  onMount(() => {
     WebApp.enableClosingConfirmation();
     WebApp.expand();
-  });
+
+    handleUITheme();
+  })
 
   goto("/myfiles", { replaceState: true });
 </script>
@@ -34,7 +43,7 @@
   <title>Seal</title>
 </svelte:head>
 
-<div class="container flex flex-col h-screen">
+<div class="container flex flex-col h-screen w-full">
   <slot />
 </div>
 
