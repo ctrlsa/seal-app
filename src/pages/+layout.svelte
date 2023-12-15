@@ -1,14 +1,10 @@
 <script>
   import "../app.css";
 
-  import { onMount } from "svelte";
   import WebApp from "@twa-dev/sdk";
   import toast, { Toaster } from "svelte-french-toast";
 
   import { goto, onNavigate } from "$app/navigation";
-
-  import { handleUITheme } from "$shared/lib/theme";
-
 
 
   /*  /!** Global app transitions *!/
@@ -28,13 +24,6 @@
   onNavigate(() => {
     WebApp.ready();
   });
-
-  onMount(() => {
-    WebApp.enableClosingConfirmation();
-    WebApp.expand();
-
-    handleUITheme();
-  })
 
   goto("/myfiles", { replaceState: true });
 </script>

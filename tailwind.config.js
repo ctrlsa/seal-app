@@ -20,7 +20,8 @@ export default {
       "dark",
       "business",
       {
-        default: {
+        dark: {
+          ...require("daisyui/src/theming/themes")["dark"],
           primary: "#0090ff",
           secondary: "#ffffff",
           accent: "#eb6b47",
@@ -33,7 +34,7 @@ export default {
         }
       }
     ], // true: all themes | false: only light + dark | array: specific themes like this ["light", "dark", "cupcake"]
-    darkTheme: "default", // name of one of the included themes for dark mode
+    darkTheme: "dark", // name of one of the included themes for dark mode
     base: true, // applies background color and foreground color for root element by default
     styled: true, // include daisyUI colors and design decisions for all components
     utils: true, // adds responsive and modifier utility classes

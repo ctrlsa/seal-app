@@ -5,37 +5,33 @@ import { themes } from "$lib/lib/enums/themes";
 import { isTelegramWebApp } from "$lib/lib/utils";
 
 
-/** Get preferred color scheme from browser */
-export const getPreferredColorScheme = () => window?.matchMedia?.("(prefers-color-scheme:dark)")?.matches ? "dark" : "light";
+/** Get preferred color scheme (browser) */
+const getPreferredColorScheme = () => window?.matchMedia?.("(prefers-color-scheme:dark)")?.matches ? "dark" : "light";
 
 /** Add event for theme change */
-export function handleUITheme() {
+export function watchThemeChange() {
   if (isTelegramWebApp()) {
     WebApp.onEvent("themeChanged", changeTheme);
   } else {
     window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", changeTheme);
   }
+
+  console.log("👀 [ADD:EventListener] >>> Theme change");
 }
 
-/** Change theme */
+/** Change app theme */
 export function changeTheme() {
   let colorScheme;
 
   if (isTelegramWebApp()) {
-    console.log("Running in Telegram");
     colorScheme = WebApp.colorScheme;
 
-    document.body.style.background = color;
+    //document.body.style.background = color;
   } else {
-    console.log("Running in browser");
     colorScheme = getPreferredColorScheme();
   }
 
-  console.log(colorScheme);
-
-  if (isEmpty(colorScheme)) {
-    colorScheme = "dark";
-  }
+  if (isEmpty(colorScheme)) colorScheme = "dark";
 
   if (colorScheme && themes.includes(colorScheme)) {
     document.documentElement.setAttribute("data-theme", colorScheme);

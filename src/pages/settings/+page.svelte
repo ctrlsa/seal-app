@@ -99,10 +99,10 @@
         <div class="hero-content text-neutral-content w-full">
           <div class="w-full">
 
-            <div class="mb-4 font-bold text-xl leading-none">
+            <div class="font-bold text-white text-xl mb-4 leading-none">
               <Wallet class="h-5 w-5 float-left mr-1.5" /> Wallet
             </div>
-            <p class="font-mono break-all mb-3 bg-opacity-40 bg-base-100 p-3 rounded-lg">{walletAddress}</p>
+            <p class="font-mono text-white break-all mb-3 bg-opacity-40 bg-base-100 p-3 rounded-lg">{walletAddress}</p>
             <div>
               <button class="btn"
                       use:copy={walletAddress} on:keyup={copyOnKeypress(walletAddress)}
