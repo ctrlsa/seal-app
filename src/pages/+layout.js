@@ -17,10 +17,10 @@ export async function load({ url }) {
   if (browser) {
     if (!url.pathname.startsWith("/onboarding") && !url.pathname.startsWith("/importwallet") && !url.pathname.startsWith("/settings")) {
       if (!isAuthenticated()) {
-        console.log("🔐 [CHECK:Auth] >>> Access denied 🛑");
+        console.warn("🔐 [CHECK:Auth] >>> Access denied 🛑");
         redirect(303, '/onboarding');
       } else {
-        console.log("🔐 [CHECK:Auth] >>> Access granted 🟢");
+        console.info("🔐 [CHECK:Auth] >>> Access granted 🟢");
       }
     }
 

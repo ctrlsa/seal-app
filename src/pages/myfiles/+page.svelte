@@ -43,9 +43,6 @@
   let searchQuery = "";
   let orderBy = "created";
 
-  // Single file upload progress
-  let uploadProgress = 0;
-
   // SortBy dropdown list open/close state
   let dropdownSortOpen = false;
 
@@ -59,10 +56,25 @@
     root: fileListElement
   };
 
+  // Single file upload progress
+  let uploadProgress = 0;
+  let uploadedData = 0;
+  let totalData = 0;
+
   // Upload button visible/hidden state
   $: uploadButtonVisible = fileListElementY < 100 || fileListElementScrollDirection === "down";
   // Items offset for the files table query of a IndexedDB
   $: offset = ITEMS_PER_PAGE * (page-1);
+
+  // Single file upload progress
+  $: if (uploadedData > 0) {
+    console.log(uploadedData);
+    console.log(totalData);
+
+    uploadProgress = ((100 * uploadedData)/totalData).toFixed(0);
+
+    console.log(uploadProgress);
+  }
 
 
   onMount(() => {
@@ -158,20 +170,17 @@
   };
 
   const progressCallback = (progressData) => {
-    uploadProgress = ((100 * progressData?.uploaded) / progressData?.total)?.toFixed(0);
-    console.log(uploadProgress);
+    uploadedData = progressData?.uploaded;
+    totalData = progressData?.total;
   };
 
   async function uploadFile(file, apiKey) {
-    console.log("Upload started...");
-
     // Push file to lighthouse node
     // Both file and folder are supported by upload function
     // Third parameter is for multiple files, if multiple files are to be uploaded at once make it true
     // Fourth parameter is the deal parameters, default null
     const output = await upload(file, apiKey, false, null, progressCallback);
 
-    uploadProgress = 0;
     //console.log(output.data);
 
     if (output.data && output.data.Hash) {

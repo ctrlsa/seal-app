@@ -16,7 +16,7 @@ export function watchThemeChange() {
     window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", changeTheme);
   }
 
-  console.log("👀 [ADD:EventListener] >>> Theme change");
+  console.info("👀 [ADD:EventListener] >>> Theme change");
 }
 
 /** Change app theme */
