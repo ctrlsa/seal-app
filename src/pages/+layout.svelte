@@ -22,7 +22,7 @@
 
   /** Telegram Web app init & expand */
   onMount(() => {
-    WebApp.ready();
+    //WebApp.ready();
   });
 
   goto("/myfiles", { replaceState: true });

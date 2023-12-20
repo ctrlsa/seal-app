@@ -25,8 +25,6 @@ export function changeTheme() {
 
   if (isTelegramWebApp()) {
     colorScheme = WebApp.colorScheme;
-
-    //document.body.style.background = color;
   } else {
     colorScheme = getPreferredColorScheme();
   }

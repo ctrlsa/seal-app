@@ -6,6 +6,7 @@
   import { upload } from "@lighthouse-web3/sdk";
   import toast, { Toaster } from "svelte-french-toast";
   import InfiniteLoading from "svelte-infinite-loading";
+  import WebApp from "@twa-dev/sdk";
 
   /** Icons */
   import ArrowDownWideNarrow from "svelte-lucide/ArrowDownWideNarrow.svelte";
@@ -26,6 +27,7 @@
   import UploadButton from "$shared/ui/button/upload.svelte";
   import confirmAction from "$shared/ui/modal/confirmAction.svelte";
   import FilePreview from "./ui/filePreview.svelte";
+
 
 
   // Storage provider main data
@@ -101,6 +103,8 @@
   const handleFileInputChange = async (event) => {
     let filesToUpload = [];
 
+    WebApp.enableClosingConfirmation();
+
     //console.log(event.target.files);
 
     // Add files to the database
@@ -167,6 +171,8 @@
         console.error(e);
       }
     }
+
+    WebApp.disableClosingConfirmation();
   };
 
   const progressCallback = (progressData) => {

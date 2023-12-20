@@ -91,8 +91,6 @@
 
 <main class="flex-1 overflow-y-scroll px-3">
   <div class="mb-8">
-    <p class="text-xl font-bold mb-2">My account</p>
-
     {#if !isEmpty($wallet)}
       <div class="hero rounded-box w-full mb-2 bg-repeat-x bg-left-top" style="background-image: url({accountBgImage});">
         <div class="hero-overlay rounded-box bg-opacity-60 w-full"></div>
@@ -102,7 +100,7 @@
             <div class="font-bold text-white text-xl mb-4 leading-none">
               <Wallet class="h-5 w-5 float-left mr-1.5" /> Wallet
             </div>
-            <p class="font-mono text-white break-all mb-3 bg-opacity-40 bg-base-100 p-3 rounded-lg">{walletAddress}</p>
+            <p class="break-all font-mono text-base-content  bg-opacity-60 rounded-lg bg-base-100 mb-3 p-3">{walletAddress}</p>
             <div>
               <button class="btn"
                       use:copy={walletAddress} on:keyup={copyOnKeypress(walletAddress)}
