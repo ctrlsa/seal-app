@@ -1,6 +1,5 @@
 <script>
   import Navbar from "$widgets/navbar.svelte";
-  import NavbarBottom from "$widgets/navbar-bottom.svelte";
   import ArrowLeft from "svelte-lucide/ArrowLeft.svelte";
   import WebApp from "@twa-dev/sdk";
 

@@ -3,17 +3,19 @@
   export let disabled = "";
 </script>
 
-<input
-  type="file"
-  {placeholder}
-  {...$$restProps}
-  on:click
-  on:change
-  on:keydown
-  on:keyup
-  on:touchstart|passive
-  on:touchend
-  on:touchcancel
-  on:mouseenter
-  on:mouseleave
-  {disabled} />
+<form enctype="multipart/form-data" name="uploadfile">
+  <input
+    type="file"
+    {placeholder}
+    {...$$restProps}
+    on:click
+    on:change
+    on:keydown
+    on:keyup
+    on:touchstart|passive
+    on:touchend
+    on:touchcancel
+    on:mouseenter
+    on:mouseleave
+    {disabled} />
+</form>

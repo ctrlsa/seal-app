@@ -35,7 +35,7 @@
             on:svelte-copy:error={copyError} on:keyup={copyOnKeypress} tabindex="0" role="button">
         <Wallet class="h-3.5 w-3.5 mr-1.5" />{shortAddr(address)}
       </span>
-      <a class="btn btn-ghost p-3 pr-1" href="/settings">
+      <a class="btn btn-ghost p-3 px-1 ml-1" href="/settings">
         <Settings class="h-7 w-7" />
       </a>
     </div>

@@ -19,14 +19,15 @@
   import { nanoid } from "$shared/lib/nanoid";
   import { ITEMS_PER_PAGE } from "$shared/lib/constants";
   import { storageProvider } from "$shared/lib/stores";
+  import { openLink } from "$shared/lib/openLink";
   import { uploadStatus } from "$shared/lib/enums/uploadStatus";
   import { getUploadsCount, syncUploads } from "$shared/lib/storageProvider/syncUploads";
 
   import StackedList from "$shared/ui/list/stacked.svelte";
   import StackedListItem from "$shared/ui/list/stackedItem.svelte";
   import UploadButton from "$shared/ui/button/upload.svelte";
-  import confirmAction from "$shared/ui/modal/confirmAction.svelte";
   import FilePreview from "./ui/filePreview.svelte";
+  import { isTelegramWebApp } from "$lib/lib/utils.js";
 
 
 
@@ -52,10 +53,16 @@
   let fileListElement;
   let fileListElementY = 0;
   let fileListElementScrollDirection;
+  let isInView;
 
   // InView options to set the root element
-  let inViewOptions = {
-    root: fileListElement
+  let inViewOptionsScroll = {
+    root: fileListElement,
+    rootMargin: "50px"
+  };
+  let inViewOptionsImage = {
+    rootMargin: "50px",
+    unobserveOnEnter: true
   };
 
   // Single file upload progress
@@ -99,6 +106,19 @@
       }
     });
   });
+
+  const inviewHandleScroll = (event) => {
+    const { inView, entry, scrollDirection, observer, node } = event.detail;
+
+    fileListElementY = fileListElement.scrollTop;
+    fileListElementScrollDirection = scrollDirection.vertical;
+  }
+
+  const inviewHandleLazyLoad = (event) => {
+    const { inView } = event.detail;
+
+    isInView = inView;
+  }
 
   const handleFileInputChange = async (event) => {
     let filesToUpload = [];
@@ -197,24 +217,24 @@
   }
 
   async function confirmDelete(id) {
-    confirmAction();
+    const message = "Delete file from local storage? [affects this device only]";
 
-    if (true === confirmed) {
+    if (isTelegramWebApp()) {
+      WebApp.showConfirm(message, async function(ok) {
+        if (ok) await deleteFile(id);
+      });
+    } else {
 
     }
   }
 
   const deleteFile = async (id) => {
-    //confirmDelete.showModal();
-
-    console.log(id);
-
-/*    try {
+    try {
       await db.files.delete(id);
       toast.success("File deleted");
     } catch (e) {
       console.error(e);
-    }*/
+    }
   }
 
   const setStatus = async (id, status) => {
@@ -269,7 +289,7 @@
       <div class="flex items-stretch">
         <details class="dropdown dropdown-end" open={dropdownSortOpen}>
           <summary
-            tabindex="0" role="button" class="btn btn-ghost"
+            tabindex="0" role="button" class="btn btn-ghost p-2.5 ml-1.5 mr-0.5"
             on:click|preventDefault={() => {dropdownSortOpen = !dropdownSortOpen}}
             on:keyup|preventDefault={() => {dropdownSortOpen = !dropdownSortOpen}}
           >
@@ -309,22 +329,15 @@
         <StackedListItem>
           <div class="flex w-full gap-x-3">
             <div class="flex-none w-24 h-24 shrink-0 grow-0">
-              <FilePreview mimeType={mimeType} url={url} alt={name} />
+              <a href="" on:click={openLink(url)}><FilePreview mimeType={mimeType} url={url} alt={name} /></a>
             </div>
 
             <div class="flex flex-1 flex-col w-16">
               <div class="flex w-full"
-                   use:inview={inViewOptions}
-                   on:inview_change={(event) => {
-                     const { inView, entry, scrollDirection, observer, node} = event.detail;
-                      fileListElementY = fileListElement.scrollTop;
-                      fileListElementScrollDirection = scrollDirection.vertical;
-              }}>
-                <p
-                  class="truncate text-ellipsis overflow-hidden text-base whitespace-nowrap font-semibold"
-                  use:copy={url} on:svelte-copy="{() => toast.success(`File URL copied`)}">
-                  {name}
-                </p>
+                   use:inview={inViewOptionsScroll}
+                   on:inview_change={inviewHandleScroll}
+              >
+                <p class="truncate text-ellipsis overflow-hidden text-base whitespace-nowrap font-semibold">{name}</p>
               </div>
 
               <div class="flex flex-1 w-full h-5">

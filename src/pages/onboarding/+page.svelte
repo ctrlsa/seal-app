@@ -34,7 +34,7 @@
 </script>
 
 <main class="flex grow items-center bg-black">
-  <div class="text-center -mt-14">
+  <div class="text-center">
     <div class="w-full mb-5 px-9">
       <h1 class="text-5xl text-white font-bold">Seal</h1>
     </div>
