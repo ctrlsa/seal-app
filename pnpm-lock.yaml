@@ -61,6 +61,9 @@ dependencies:
     version: 3.0.27
 
 devDependencies:
+  '@svelte-put/qr':
+    specifier: ^1.0.2
+    version: 1.0.2
   '@sveltejs/adapter-static':
     specifier: ^3.0.1
     version: 3.0.1(@sveltejs/kit@2.0.4)
@@ -118,6 +121,9 @@ devDependencies:
   svelte-lucide:
     specifier: ^0.8.2
     version: 0.8.2(svelte@4.2.8)
+  svelte-simples:
+    specifier: ^0.9.2
+    version: 0.9.2(svelte@4.2.8)
   svelte-tabler:
     specifier: ^0.6.3
     version: 0.6.3(svelte@4.2.8)
@@ -1008,6 +1014,12 @@ packages:
     resolution: {integrity: sha512-kQpk267uxB19X3X2T1mvNMjyvIEonpNSHrMlK5ZaBU6aZxw7wPbpgKJOjHN3+/GPVpXgAV9soVT2oyHpLkLtyw==}
     engines: {node: '>= 8'}
     dev: false
+
+  /@svelte-put/qr@1.0.2:
+    resolution: {integrity: sha512-GQE2a44gSuS6ISv0/wVbOdwHeO8uQ7uoJXPYT96zpoHlhzUNrRq0YtVNGXydR3Ke4FmhkRbtfaA3nSsukPJ5iQ==}
+    dependencies:
+      qrcode-generator: 1.4.4
+    dev: true
 
   /@sveltejs/adapter-static@3.0.1(@sveltejs/kit@2.0.4):
     resolution: {integrity: sha512-6lMvf7xYEJ+oGeR5L8DFJJrowkefTK6ZgA4JiMqoClMkKq0s6yvsd3FZfCFvX1fQ0tpCD7fkuRVHsnUVgsHyNg==}
@@ -3354,6 +3366,10 @@ packages:
     engines: {node: '>=6.0.0'}
     dev: false
 
+  /qrcode-generator@1.4.4:
+    resolution: {integrity: sha512-HM7yY8O2ilqhmULxGMpcHSF1EhJJ9yBj8gvDEuZ6M+KGJ0YY2hKpnXvRD+hZPLrDVck3ExIGhmPtSdcjC+guuw==}
+    dev: true
+
   /queue-microtask@1.2.3:
     resolution: {integrity: sha512-NuaNSa6flKT5JaSYQzJok04JzTL1CA6aGhv5rfLW3PgqA+M2ChpZQnAC8h8i4ZFkBS8X5RqkDBHA7r4hej3K9A==}
     dev: true
@@ -3816,6 +3832,14 @@ packages:
       strip-indent: 3.0.0
       svelte: 4.2.8
       typescript: 5.3.3
+    dev: true
+
+  /svelte-simples@0.9.2(svelte@4.2.8):
+    resolution: {integrity: sha512-6XnuHVvafnE8FVRDKLDpk/ixVYMTtzToOQTUy1D8mHnOyPIs5IkZ5oOIZf8SdEGxUyVD46jWhoViDckHlSWvyA==}
+    peerDependencies:
+      svelte: ^3.54.0 || ^4.0.0
+    dependencies:
+      svelte: 4.2.8
     dev: true
 
   /svelte-tabler@0.6.3(svelte@4.2.8):

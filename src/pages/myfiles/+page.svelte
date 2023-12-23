@@ -7,6 +7,7 @@
   import toast from "svelte-french-toast";
   import InfiniteLoading from "svelte-infinite-loading";
   import WebApp from "@twa-dev/sdk";
+  import { goto } from "$app/navigation";
 
   /** Icons */
   import ArrowDownWideNarrow from "svelte-lucide/ArrowDownWideNarrow.svelte";
@@ -19,6 +20,7 @@
   import MoreVertical from "svelte-lucide/MoreVertical.svelte";
   import File from "svelte-lucide/File.svelte";
 
+  /** Lib imports */
   import { db } from "$shared/lib/db";
   import { nanoid } from "$shared/lib/nanoid";
   import { ITEMS_PER_PAGE } from "$shared/lib/constants";
@@ -27,11 +29,11 @@
   import { uploadStatus } from "$shared/lib/enums/uploadStatus";
   import { getUploadsCount, syncUploads } from "$shared/lib/storageProvider/syncUploads";
 
+  /** Component imports */
+  import FilePreview from "./ui/filePreview.svelte";
+  import Modal from "$shared/ui/modal/modal.svelte";
   import StackedListItem from "$shared/ui/list/stackedItem.svelte";
   import UploadButton from "$shared/ui/button/upload.svelte";
-  import Modal from "$shared/ui/modal/modal.svelte";
-  import FilePreview from "./ui/filePreview.svelte";
-  import { twMerge } from "tailwind-merge";
 
 
   // Storage provider main data
@@ -357,7 +359,7 @@
       <StackedListItem>
         <div class="flex w-full gap-x-3">
           <div class="flex-none w-24 h-24 shrink-0 grow-0">
-            <a href="" on:click={() => openLink(url)}><FilePreview mimeType={mimeType} url={url} alt={name} /></a>
+            <a href="" on:click={() => openLink(url)}><FilePreview mimeType={mimeType} url={url} alt="" /></a>
           </div>
 
           <div class="flex flex-1 flex-col w-16">
@@ -384,9 +386,7 @@
                 <button class="btn btn-sm btn-neutral" on:click={() => openLink(url)}>
                   <ExternalLink class="h-4 w-4" />Open
                 </button>
-                <button class="btn btn-sm btn-neutral"
-                        use:copy={url} on:svelte-copy="{() => toast.success(`File URL copied`)}"
-                >
+                <button class="btn btn-sm btn-neutral" on:click={() => goto("/sharefile/" + id)}>
                   <Share2 class="h-4 w-4" />Share
                 </button>
                 <button class="btn btn-sm btn-neutral"

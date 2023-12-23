@@ -5,6 +5,6 @@
   initBackButton();
 </script>
 
-<Navbar>Settings</Navbar>
+<Navbar>Share file</Navbar>
 
 <slot />
