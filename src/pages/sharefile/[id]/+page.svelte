@@ -22,7 +22,7 @@
     copyText(text).then(() => {
       WebApp.BackButton.hide();
       toast.success(toastText);
-      goto("/myfiles");
+      goto("/myfiles", { replaceState: true });
     });
   }
 </script>
