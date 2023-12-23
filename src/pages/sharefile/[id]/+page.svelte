@@ -11,16 +11,18 @@
   import Share2 from "svelte-lucide/Share2.svelte";
   import Telegram from "svelte-simples/Telegram.svelte";
   import Cube from "$lib/assets/images/cube-blue.svg";
+  import WebApp from "@twa-dev/sdk";
 
 
   export let data;
 
 
   /** Copy now and go away */
-  const copySonic = async (text, toastText) => {
-    copyText(text).then(async () => {
-      await goto("/myfiles");
+  const copySonic = (text, toastText) => {
+    copyText(text).then(() => {
+      WebApp.BackButton.hide();
       toast.success(toastText);
+      goto("/myfiles");
     });
   }
 </script>
