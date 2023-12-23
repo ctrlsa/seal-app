@@ -3,6 +3,7 @@
 
   import Navbar from "$widgets/navbar.svelte";
 
+
   let address = $wallet.address;
 </script>
 

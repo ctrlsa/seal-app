@@ -40,8 +40,7 @@
   }
 
   async function confirmAccountDelete() {
-    let confirmed;
-    const message = "WARNING! Do you really want to delete wallet? This can't be undone! Make sure to save mnemonic and private key";
+    const message = "WARNING! Your wallet (mnemonic & private key) and files will be deleted from this device! This can't be undone! Make sure to save mnemonic and private key";
 
     if (isTelegramWebApp()) {
       WebApp.showConfirm(message, async function(ok) {
