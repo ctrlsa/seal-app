@@ -5,7 +5,7 @@
   import Wallet from "svelte-lucide/Wallet.svelte";
   import Settings from "svelte-lucide/Settings.svelte";
 
-  import { shortAddr } from "$shared/lib/wallet/utils";
+  import { shortAddr } from "$shared/lib/utils";
 
 
   export let address="";
@@ -22,7 +22,7 @@
   }
 </script>
 
-<nav class="navbar sticky top-0 z-50">
+<nav class="navbar flex-none">
   <div class="navbar-start w-full">
     <span class="m-0 p-0 text-2xl font-bold">
       <slot />

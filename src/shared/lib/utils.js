@@ -7,6 +7,44 @@ export function isTelegramWebApp() {
   return !isEmpty(WebApp.initDataUnsafe);
 }
 
+/** Universal link opener */
+export function openLink(url, target= "_blank", instantView = true, openInTelegram = false) {
+  if (isTelegramWebApp()) {
+    const options = instantView ? {try_instant_view:true} : {};
+
+    if (openInTelegram) {
+      WebApp.openTelegramLink(url);
+    } else {
+      WebApp.openLink(url, options);
+    }
+  } else {
+    window.open(url, target);
+  }
+}
+
+/** Universal link opener */
+export function shareLink(url, text = "", instantView = true, openInTelegram = true) {
+  if (isTelegramWebApp()) {
+    const options = instantView ? {try_instant_view:true} : {};
+    const shareURL = "https://t.me/share/url?url=" + url + "&text=" + text;
+
+    if (openInTelegram) {
+      WebApp.openTelegramLink(shareURL);
+      window.blur();
+    } else {
+      WebApp.openLink(shareURL, options);
+      window.blur();
+    }
+  } else {
+    window.open(url);
+  }
+}
+
+/** Return wallet short address (display only!) */
+export function shortAddr(addr) {
+  return addr.substring(0, 6) + "..." + addr.substring(addr.length - 4);
+}
+
 export function extractThemeColorsFromDOM() {
   const computedStyles = getComputedStyle(document.querySelector(":root"));
 

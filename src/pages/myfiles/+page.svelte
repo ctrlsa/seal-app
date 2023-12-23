@@ -1,34 +1,37 @@
 <script>
   import { onMount } from "svelte";
-  import { copy } from "svelte-copy";
+  import { copy, copyText } from "svelte-copy";
   import { liveQuery } from "dexie";
   import { inview } from "svelte-inview";
   import { upload } from "@lighthouse-web3/sdk";
-  import toast, { Toaster } from "svelte-french-toast";
+  import toast from "svelte-french-toast";
   import InfiniteLoading from "svelte-infinite-loading";
   import WebApp from "@twa-dev/sdk";
 
   /** Icons */
   import ArrowDownWideNarrow from "svelte-lucide/ArrowDownWideNarrow.svelte";
+  import Copy from "svelte-lucide/Copy.svelte";
+  import ExternalLink from "svelte-lucide/ExternalLink.svelte";
   import Info from "svelte-lucide/Info.svelte";
   import Plus from "svelte-lucide/Plus.svelte";
   import Share2 from "svelte-lucide/Share2.svelte";
   import XCircle from "svelte-lucide/XCircle.svelte";
+  import MoreVertical from "svelte-lucide/MoreVertical.svelte";
+  import File from "svelte-lucide/File.svelte";
 
   import { db } from "$shared/lib/db";
   import { nanoid } from "$shared/lib/nanoid";
   import { ITEMS_PER_PAGE } from "$shared/lib/constants";
   import { storageProvider } from "$shared/lib/stores";
-  import { openLink } from "$shared/lib/openLink";
+  import { isTelegramWebApp, openLink, shareLink } from "$shared/lib/utils";
   import { uploadStatus } from "$shared/lib/enums/uploadStatus";
   import { getUploadsCount, syncUploads } from "$shared/lib/storageProvider/syncUploads";
 
-  import StackedList from "$shared/ui/list/stacked.svelte";
   import StackedListItem from "$shared/ui/list/stackedItem.svelte";
   import UploadButton from "$shared/ui/button/upload.svelte";
+  import Modal from "$shared/ui/modal/modal.svelte";
   import FilePreview from "./ui/filePreview.svelte";
-  import { isTelegramWebApp } from "$lib/lib/utils.js";
-
+  import { twMerge } from "tailwind-merge";
 
 
   // Storage provider main data
@@ -46,10 +49,14 @@
   let searchQuery = "";
   let orderBy = "created";
 
+  // Modal dialog
+  let modalOpen = false;
+
   // SortBy dropdown list open/close state
   let dropdownSortOpen = false;
 
   // File list element binding, vertical scroll position, scroll direction
+  let selectedFile;
   let fileListElement;
   let fileListElementY = 0;
   let fileListElementScrollDirection;
@@ -80,7 +87,7 @@
     console.log(uploadedData);
     console.log(totalData);
 
-    uploadProgress = ((100 * uploadedData)/totalData).toFixed(0);
+    uploadProgress = Number(((100 * uploadedData)/totalData).toFixed(0));
 
     console.log(uploadProgress);
   }
@@ -107,6 +114,23 @@
     });
   });
 
+  const openModal = (id, cid, name, url) => {
+    selectedFile = {
+      id: id,
+      cid: cid,
+      name: name,
+      url: url
+    };
+
+    modalActions.showModal();
+  }
+
+  const modalCopy = (text, toastText) => {
+    copyText(text).then(() => toast.success(toastText));
+
+    modalActions.close();
+  }
+
   const inviewHandleScroll = (event) => {
     const { inView, entry, scrollDirection, observer, node } = event.detail;
 
@@ -124,8 +148,7 @@
     let filesToUpload = [];
 
     WebApp.enableClosingConfirmation();
-
-    //console.log(event.target.files);
+    //console.log(event.target.files,
 
     // Add files to the database
     for (const file of event.target.files) {
@@ -196,11 +219,13 @@
   };
 
   const progressCallback = (progressData) => {
-    uploadedData = progressData?.uploaded;
-    totalData = progressData?.total;
+    uploadedData = progressData.uploaded;
+    totalData = progressData.total;
   };
 
   async function uploadFile(file, apiKey) {
+    uploadProgress = 0;
+
     // Push file to lighthouse node
     // Both file and folder are supported by upload function
     // Third parameter is for multiple files, if multiple files are to be uploaded at once make it true
@@ -280,7 +305,13 @@
   });
 </script>
 
-<div class="px-2 sticky top-16 z-10">
+{#if uploadButtonVisible}
+  <UploadButton on:change={handleFileInputChange}>
+    <Plus class="h-8 w-8 text-white" />
+  </UploadButton>
+{/if}
+
+<div class="flex-none px-2">
   <div class="navbar bg-base-300 rounded-box">
     <div class="flex-1 pl-2">
       <input type="text" placeholder="Search" bind:value={searchQuery} class="input input-bordered input-sm w-full"/>
@@ -318,82 +349,97 @@
   </div>
 </div>
 
-<main class="flex-1 overflow-y-scroll px-3"
-      bind:this={fileListElement}
->
-  <StackedList>
-    {#if $files}
-      {#each $files as currentFile (currentFile.id)}
-        {@const { id, cid, pid, name, size, mimeType, status, encryption, created, updated, protocol, storageProvider, txHash, publicKey, url } = currentFile }
+<ul role="list" class="flex-1 divide-y divide-neutral-900 w-full list-none overflow-y-scroll px-2" bind:this={fileListElement}>
+  {#if $files}
+    {#each $files as currentFile, index (currentFile.id)}
+      {@const { id, cid, pid, name, size, mimeType, status, encryption, created, updated, protocol, storageProvider, txHash, publicKey, url } = currentFile }
 
-        <StackedListItem>
-          <div class="flex w-full gap-x-3">
-            <div class="flex-none w-24 h-24 shrink-0 grow-0">
-              <a href="" on:click={openLink(url)}><FilePreview mimeType={mimeType} url={url} alt={name} /></a>
+      <StackedListItem>
+        <div class="flex w-full gap-x-3">
+          <div class="flex-none w-24 h-24 shrink-0 grow-0">
+            <a href="" on:click={() => openLink(url)}><FilePreview mimeType={mimeType} url={url} alt={name} /></a>
+          </div>
+
+          <div class="flex flex-1 flex-col w-16">
+            <div class="flex w-full">
+              <p class="truncate text-ellipsis overflow-hidden text-base whitespace-nowrap font-semibold">{name}</p>
             </div>
 
-            <div class="flex flex-1 flex-col w-16">
-              <div class="flex w-full"
-                   use:inview={inViewOptionsScroll}
-                   on:inview_change={inviewHandleScroll}
-              >
-                <p class="truncate text-ellipsis overflow-hidden text-base whitespace-nowrap font-semibold">{name}</p>
-              </div>
+            <div class="flex flex-1 w-full h-5">
+              {#if status === uploadStatus.PENDING}
+                <span class="loading loading-ring loading-sm"></span>
+              {:else if status === uploadStatus.UPLOADING}
+                <progress class="progress w-full" value="{uploadProgress}" max="100"></progress>
+              {:else if status === uploadStatus.FAILED}
+                <div class="badge badge-error badge-outline mt-1">Upload error</div>
+              {:else if status === uploadStatus.QUEUED || status === uploadStatus.STORED}
+                <p class="truncate text-ellipsis overflow-hidden text-xs text-gray-500 whitespace-nowrap leading-5 mt-1">
+                  CID: {cid}
+                </p>
+              {/if}
+            </div>
 
-              <div class="flex flex-1 w-full h-5">
-                {#if status === uploadStatus.PENDING}
-                  <span class="loading loading-ring loading-sm"></span>
-                {:else if status === uploadStatus.UPLOADING}
-                  <progress class="progress w-full" value="{uploadProgress}" max="100"></progress>
+            <div class="flex grow w-full justify-end items-end gap-x-1.5">
+              {#if status === uploadStatus.QUEUED || status === uploadStatus.STORED}
+                <button class="btn btn-sm btn-neutral" on:click={() => openLink(url)}>
+                  <ExternalLink class="h-4 w-4" />Open
+                </button>
+                <button class="btn btn-sm btn-neutral"
+                        use:copy={url} on:svelte-copy="{() => toast.success(`File URL copied`)}"
+                >
+                  <Share2 class="h-4 w-4" />Share
+                </button>
+                <button class="btn btn-sm btn-neutral"
+                  on:click={() => openModal(id, cid, name, url)}>
+                  <MoreVertical class="h-4 w-4" />
+                </button>
+              {:else}
+                {#if status === uploadStatus.PENDING || status === uploadStatus.UPLOADING}
+                  <button class="btn btn-neutral btn-sm" on:click={() => setStatus(id, uploadStatus.DELETED)}>
+                    <XCircle class="h-4 w-4" />Cancel
+                  </button>
                 {:else if status === uploadStatus.FAILED}
-                  <div class="badge badge-error badge-outline mt-1">Upload error</div>
-                {:else if status === uploadStatus.QUEUED || status === uploadStatus.STORED}
-                  <p
-                    class="truncate text-ellipsis overflow-hidden text-xs text-gray-500 whitespace-nowrap leading-5 mt-1"
-                    use:copy={cid} on:svelte-copy="{() => toast.success("CID copied")}"
-                  >
-                    CID: {cid}
-                  </p>
+                  <button class="btn btn-sm btn-error" on:click={() => confirmDelete(id)}>
+                    <XCircle class="h-4 w-4" />Delete
+                  </button>
                 {/if}
-              </div>
-
-              <div class="flex w-full grow justify-end items-end gap-x-2">
-                {#if status === uploadStatus.QUEUED || status === uploadStatus.STORED}
-                  <button class="btn btn-sm btn-ghost">
-                    <Info class="h-4 w-4" />
-                  </button>
-                  <button
-                    class="btn btn-sm btn-neutral"
-                    use:copy={url} on:svelte-copy="{() => toast.success(`File URL copied`)}">
-                    <Share2 class="h-4 w-4" />Share
-                  </button>
-                  <button class="btn btn-sm btn-error" on:click={confirmDelete(id)}>
-                    <XCircle class="h-4 w-4" />
-                  </button>
-                {:else}
-                  {#if status === uploadStatus.PENDING || status === uploadStatus.UPLOADING}
-                    <button class="btn btn-neutral btn-sm" on:click={setStatus(id, uploadStatus.DELETED)}><XCircle class="h-4 w-4" />Cancel</button>
-                  {:else if status === uploadStatus.FAILED}
-                    <button class="btn btn-sm btn-error" on:click={confirmDelete(id)}>
-                      <XCircle class="h-4 w-4" />Delete
-                    </button>
-                  {/if}
-                {/if}
-              </div>
+              {/if}
             </div>
           </div>
-        </StackedListItem>
-      {/each}
-    {:else}
-      <StackedListItem>
-        <p class="mt-1">Use the <kbd class="kbd">+</kbd> button on the bottom right to upload a file</p>
+        </div>
       </StackedListItem>
-    {/if}
-  </StackedList>
-
-  {#if uploadButtonVisible}
-    <UploadButton on:change={handleFileInputChange}>
-      <Plus class="h-8 w-8 text-white" />
-    </UploadButton>
+    {/each}
+  {:else}
+    <StackedListItem>
+      <p class="mt-1">Use the <kbd class="kbd">+</kbd> button on the bottom right to upload a file</p>
+    </StackedListItem>
   {/if}
-</main>
+</ul>
+
+<dialog id="modalActions" class="modal modal-bottom">
+  <div class="modal-box p-4">
+    <div class="mb-5 mt-2">
+      <p class="align-middle break-all font-bold text-xl inline-block">
+        <File class="h-5.5 w-5.5 inline-block align-text-top" /> {selectedFile?.name}
+      </p>
+    </div>
+
+    <div class="flex flex-col w-full justify-start items-end gap-y-1.5">
+      <button class="btn btn-block btn-neutral" on:click={() => modalCopy(selectedFile?.url, `File URL copied`)}>
+        <Copy class="h-4 w-4" />Copy file link (URL)
+      </button>
+      <button class="btn btn-block btn-neutral" on:click={() => modalCopy(selectedFile?.cid, `CID copied`)}>
+        <Copy class="h-4 w-4" />Copy file CID
+      </button>
+      <button class="btn btn-block btn-neutral" on:click={() => { toast("Not implemented...", {icon: "🌚"}); modalActions.close();}}>
+        <Info class="h-4 w-4" />File properties
+      </button>
+      <button class="btn btn-block btn-error" on:click={() => { confirmDelete(selectedFile?.id); modalActions.close();}}>
+        <XCircle class="h-4 w-4" />Delete file
+      </button>
+    </div>
+  </div>
+  <form method="dialog" class="modal-backdrop">
+    <button>close</button>
+  </form>
+</dialog>

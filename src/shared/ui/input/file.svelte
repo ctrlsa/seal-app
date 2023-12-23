@@ -10,6 +10,7 @@
     {...$$restProps}
     on:click
     on:change
+    on:input
     on:keydown
     on:keyup
     on:touchstart|passive
@@ -17,5 +18,5 @@
     on:touchcancel
     on:mouseenter
     on:mouseleave
-    {disabled} />
+    {disabled}>
 </form>

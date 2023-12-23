@@ -32,7 +32,7 @@
   <title>Seal</title>
 </svelte:head>
 
-<div class="container flex flex-col h-screen w-full">
+<div class="flex flex-col container h-screen">
   <slot />
 </div>
 

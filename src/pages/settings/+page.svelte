@@ -16,7 +16,6 @@
 
   import { db } from "$lib/lib/db";
   import { wallet, storageProvider } from "$lib/lib/stores";
-  import { openLink } from "$lib/lib/openLink";
   import { deleteWallet } from "$lib/lib/wallet/delete";
   import { createNewWallet } from "$lib/lib/wallet/createNew";
   import { removeStorageProvider } from "$lib/lib/storageProvider/remove";
@@ -132,7 +131,7 @@
             </div>
 
             <div class="break-all font-mono text-base-content  bg-opacity-60 rounded-lg bg-base-100 mb-3 p-3"
-               role="button" tabindex="0" use:copy={walletAddress} on:keyup={copyOnKeypress(walletAddress)}
+               role="button" tabindex="0" use:copy={walletAddress} on:keyup={() => copyOnKeypress(walletAddress)}
                on:svelte-copy="{() => toast.success(`Address copied`)}"
             >{walletAddress}</div>
 
@@ -176,7 +175,7 @@
         <button class="btn btn-neutral shrink" on:click={resyncFiles}>
           <RefreshCw class="h-4 w-4" /> Resync files
         </button>
-        <button class="btn btn-neutral grow" on:click={requestNewApiKey($wallet.publicKey, $wallet.privateKey)}><Plug class="h-4 w-4" />Renew ApiKey</button>
+        <button class="btn btn-neutral grow" on:click={() => requestNewApiKey($wallet.publicKey, $wallet.privateKey)}><Plug class="h-4 w-4" />Renew ApiKey</button>
       </div>
     {:else}
       <p>Create or restore an account to setup a storage provider</p>

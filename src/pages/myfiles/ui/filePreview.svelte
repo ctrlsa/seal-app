@@ -2,6 +2,8 @@
   import File from "svelte-tabler/File.svelte";
   import FileTypePdf from "svelte-tabler/FileTypePdf.svelte";
 
+  import { IMAGE_PREVIEW_SIZE } from "$lib/lib/constants";
+
   export let mimeType = "";
   export let url = "";
   export let alt = "";
@@ -10,7 +12,7 @@
 {#if mimeType.startsWith("image/gif")}
   <img class="object-cover w-24 h-24 rounded-xl" src="{url}" alt="{alt}">
 {:else if mimeType.startsWith("image/") && !url.startsWith("blob:")}
-  <img class="object-cover w-24 h-24 rounded-xl" src="{url}?h=192&w=192" alt="{alt}">
+  <img class="object-cover w-24 h-24 rounded-xl" src="{url}?h={IMAGE_PREVIEW_SIZE}&w={IMAGE_PREVIEW_SIZE}" alt="{alt}">
 {:else if mimeType.startsWith("image/") && url.startsWith("blob:")}
   <img class="object-cover w-24 h-24 rounded-xl" src={url} alt="{alt}">
 {:else if mimeType.startsWith("application/pdf")}
