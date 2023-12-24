@@ -31,19 +31,21 @@
   <h1 class="font-bold text-xl break-all px-1">{data.name}</h1>
 
   <div class="flex flex-col mb-8 mt-4 items-center">
-    <QR
-      data={data.url}
-      logo={Cube}
-      logoRatio={1.1}
-      shape="circle"
-      let:attributes
-      let:innerHTML
-    >
-      <svg {...attributes} class="w-64 w-64 neutral-content dark:text-white">
-        <!-- eslint-disable-next-line svelte/no-at-html-tags -->
-        {@html innerHTML}
-      </svg>
-    </QR>
+    <div class="bg-white p-2 rounded-lg">
+      <QR
+        data={data.url}
+        logo={Cube}
+        logoRatio={1.1}
+        shape="circle"
+        let:attributes
+        let:innerHTML
+      >
+        <svg {...attributes} class="w-52 h-52 text-black rounded-box">
+          <!-- eslint-disable-next-line svelte/no-at-html-tags -->
+          {@html innerHTML}
+        </svg>
+      </QR>
+    </div>
   </div>
 
   <div class="flex flex-col w-full justify-start items-end gap-y-2 px-2">
