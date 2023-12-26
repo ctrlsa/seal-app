@@ -1,12 +1,15 @@
 <script>
   import { onMount } from "svelte";
-  import { copy, copyText } from "svelte-copy";
+  import { slide } from "svelte/transition";
+  import { quintOut } from "svelte/easing";
+  import { copyText } from "svelte-copy";
   import { liveQuery } from "dexie";
-  import { inview } from "svelte-inview";
-  import { upload } from "@lighthouse-web3/sdk";
+  import { filesize } from "filesize";
   import toast from "svelte-french-toast";
-  import InfiniteLoading from "svelte-infinite-loading";
   import WebApp from "@twa-dev/sdk";
+  import { upload, getBalance } from "@lighthouse-web3/sdk";
+  import { inview } from "svelte-inview";
+  import InfiniteLoading from "svelte-infinite-loading";
   import { goto } from "$app/navigation";
 
   /** Icons */
@@ -19,12 +22,13 @@
   import XCircle from "svelte-lucide/XCircle.svelte";
   import MoreVertical from "svelte-lucide/MoreVertical.svelte";
   import File from "svelte-lucide/File.svelte";
+  import Search from "svelte-lucide/Search.svelte";
 
   /** Lib imports */
   import { db } from "$shared/lib/db";
   import { nanoid } from "$shared/lib/nanoid";
   import { ITEMS_PER_PAGE } from "$shared/lib/constants";
-  import { storageProvider } from "$shared/lib/stores";
+  import { storageProvider, wallet } from "$shared/lib/stores";
   import { isTelegramWebApp, openLink, shareLink } from "$shared/lib/utils";
   import { uploadStatus } from "$shared/lib/enums/uploadStatus";
   import { getUploadsCount, syncUploads } from "$shared/lib/storageProvider/syncUploads";
@@ -42,12 +46,18 @@
   const storageProviderGatewayUrl = $storageProvider.gatewayUrl;
   const storageProviderApiKey = $storageProvider.apiKey;
 
+  // Files array
   let files;
+
+  // Storage info
+  let storageUsed = 0;
+  let storageAvailable = 0;
 
   // Pagination:
   let page = 1;
 
-  // Query parameters:
+  // Search and sorting
+  let searchBoxVisible = false;
   let searchQuery = "";
   let orderBy = "created";
 
@@ -78,6 +88,9 @@
   let uploadProgress = 0;
   let uploadedData = 0;
   let totalData = 0;
+
+  // Wallet public key
+  $: walletPublicKey = $wallet.publicKey;
 
   // Upload button visible/hidden state
   $: uploadButtonVisible = fileListElementY < 100 || fileListElementScrollDirection === "down";
@@ -114,6 +127,8 @@
         }
       }
     });
+
+    updateStorageInfo();
   });
 
   const openModal = (id, cid, name, url) => {
@@ -274,6 +289,18 @@
     }
   }
 
+  const updateStorageInfo = async() => {
+    storageUsed = 0;
+    storageAvailable = 0;
+
+    const balance =  await getBalance(walletPublicKey);
+
+    if (balance) {
+      storageUsed = balance.data.dataUsed;
+      storageAvailable = balance.data.dataLimit;
+    }
+  }
+
   $: files = liveQuery(async () => {
     let filter;
 
@@ -316,13 +343,30 @@
 <div class="flex-none px-2">
   <div class="navbar bg-base-300 rounded-box">
     <div class="flex-1 pl-2">
-      <input type="text" placeholder="Search" bind:value={searchQuery} class="input input-bordered input-sm w-full"/>
+      {#if searchBoxVisible}
+        <input type="text" placeholder="Search" class="input input-bordered input-sm w-full"
+               in:slide={{ delay: 100, axis: 'x', easing: quintOut }} bind:value={searchQuery}
+        />
+      {:else}
+        <div class="w-full" role="button" tabindex="0" in:slide={{ delay: 100, easing: quintOut }}
+             on:click={updateStorageInfo} on:keypress={updateStorageInfo}
+        >
+          {#if storageUsed === 0 && storageAvailable === 0}
+            <span class="loading loading-infinity loading-md"></span>
+          {:else}
+            <strong>{ filesize(storageUsed, { round: 1 }) }</strong> of { filesize(storageAvailable, { round: 1 }) } used
+          {/if}
+        </div>
+      {/if}
     </div>
     <div class="flex justify-end">
       <div class="flex items-stretch">
+        <button class="btn btn-ghost p-2.5 ml-1.5 mr-1" on:click={() => (searchBoxVisible = !searchBoxVisible)}>
+          <Search class="h-6 w-6" />
+        </button>
         <details class="dropdown dropdown-end" open={dropdownSortOpen}>
           <summary
-            tabindex="0" role="button" class="btn btn-ghost p-2.5 ml-1.5 mr-0.5"
+            tabindex="0" role="button" class="btn btn-ghost p-2.5 mr-0.5"
             on:click|preventDefault={() => {dropdownSortOpen = !dropdownSortOpen}}
             on:keyup|preventDefault={() => {dropdownSortOpen = !dropdownSortOpen}}
           >

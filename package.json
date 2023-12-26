@@ -52,6 +52,7 @@
 		"buffer": "^6.0.3",
 		"dexie": "^3.2.4",
 		"ethers": "^6.9.1",
+		"filesize": "^10.1.0",
 		"mime": "^4.0.1",
 		"moderndash": "^3.9.0",
 		"nanoid": "^5.0.4",
