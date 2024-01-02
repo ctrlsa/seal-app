@@ -28,16 +28,16 @@
   import { db } from "$shared/lib/db";
   import { nanoid } from "$shared/lib/nanoid";
   import { ITEMS_PER_PAGE } from "$shared/lib/constants";
-  import { storageProvider, wallet } from "$shared/lib/stores";
-  import { isTelegramWebApp, openLink, shareLink } from "$shared/lib/utils";
+  import { storageProvider, storageInfo, wallet } from "$shared/lib/stores";
+  import { openLink } from "$shared/lib/utils";
   import { uploadStatus } from "$shared/lib/enums/uploadStatus";
   import { getUploadsCount, syncUploads } from "$shared/lib/storageProvider/syncUploads";
 
   /** Component imports */
   import FilePreview from "./ui/filePreview.svelte";
-  import Modal from "$shared/ui/modal/modal.svelte";
   import StackedListItem from "$shared/ui/list/stackedItem.svelte";
   import UploadButton from "$shared/ui/button/upload.svelte";
+  import Confirm from "$lib/ui/modal/confirm.svelte";
 
 
   // Storage provider main data
@@ -48,10 +48,6 @@
 
   // Files array
   let files;
-
-  // Storage info
-  let storageUsed = 0;
-  let storageAvailable = 0;
 
   // Pagination:
   let page = 1;
@@ -73,6 +69,9 @@
   let fileListElementY = 0;
   let fileListElementScrollDirection;
   let isInView;
+
+  // Remove dialog
+  let modalRemove;
 
   // InView options to set the root element
   let inViewOptionsScroll = {
@@ -216,6 +215,11 @@
             updated: Date.now(),
             url: storageProviderGatewayUrl + uploadResponse.Hash
           });
+
+          storageInfo.set({
+            used: $storageInfo.used + filesToUpload[i].size,
+            limit: $storageInfo.limit
+          });
         } catch (e) {
           await db.files.update(filesToUpload[i].id, {
             "status": uploadStatus.FAILED
@@ -258,22 +262,10 @@
     return output;
   }
 
-  async function confirmDelete(id) {
-    const message = "Delete file from local storage? [affects this device only]";
-
-    if (isTelegramWebApp()) {
-      WebApp.showConfirm(message, async function(ok) {
-        if (ok) await deleteFile(id);
-      });
-    } else {
-
-    }
-  }
-
-  const deleteFile = async (id) => {
+  const removeFile = async (id) => {
     try {
       await db.files.delete(id);
-      toast.success("File deleted");
+      toast.success("File removed");
     } catch (e) {
       console.error(e);
     }
@@ -290,14 +282,15 @@
   }
 
   const updateStorageInfo = async() => {
-    storageUsed = 0;
-    storageAvailable = 0;
+    storageInfo.set({ used: 0, limit: 0 });
 
     const balance =  await getBalance(walletPublicKey);
 
     if (balance) {
-      storageUsed = balance.data.dataUsed;
-      storageAvailable = balance.data.dataLimit;
+      storageInfo.set({
+        used: balance.data.dataUsed,
+        limit: balance.data.dataLimit
+      });
     }
   }
 
@@ -322,7 +315,7 @@
 
     for (const file of allFiles) {
       if (file.status === uploadStatus.DELETED) {
-        await deleteFile(file.id);
+        await removeFile(file.id);
       }
     }
 
@@ -341,7 +334,7 @@
 {/if}
 
 <div class="flex-none px-2">
-  <div class="navbar bg-base-300 rounded-box">
+  <div class="navbar bg-base-300 rounded-box py-0">
     <div class="flex-1 pl-2">
       {#if searchBoxVisible}
         <input type="text" placeholder="Search" class="input input-bordered input-sm w-full"
@@ -351,22 +344,22 @@
         <div class="w-full" role="button" tabindex="0" in:slide={{ delay: 100, easing: quintOut }}
              on:click={updateStorageInfo} on:keypress={updateStorageInfo}
         >
-          {#if storageUsed === 0 && storageAvailable === 0}
+          {#if $storageInfo.used === 0 && $storageInfo.limit === 0}
             <span class="loading loading-infinity loading-md"></span>
           {:else}
-            <strong>{ filesize(storageUsed, { round: 1 }) }</strong> of { filesize(storageAvailable, { round: 1 }) } used
+            <strong>{ filesize($storageInfo.used, { round: 1 }) }</strong> of { filesize($storageInfo.limit, { round: 1 }) } used
           {/if}
         </div>
       {/if}
     </div>
     <div class="flex justify-end">
       <div class="flex items-stretch">
-        <button class="btn btn-ghost p-2.5 ml-1.5 mr-1" on:click={() => (searchBoxVisible = !searchBoxVisible)}>
+        <button class="btn btn-ghost px-2.5 py-2 ml-1.5 mr-1" on:click={() => (searchBoxVisible = !searchBoxVisible)}>
           <Search class="h-6 w-6" />
         </button>
         <details class="dropdown dropdown-end" open={dropdownSortOpen}>
           <summary
-            tabindex="0" role="button" class="btn btn-ghost p-2.5 mr-0.5"
+            tabindex="0" role="button" class="btn btn-ghost px-2.5 py-2 mr-0.5"
             on:click|preventDefault={() => {dropdownSortOpen = !dropdownSortOpen}}
             on:keyup|preventDefault={() => {dropdownSortOpen = !dropdownSortOpen}}
           >
@@ -443,7 +436,7 @@
                     <XCircle class="h-4 w-4" />Cancel
                   </button>
                 {:else if status === uploadStatus.FAILED}
-                  <button class="btn btn-sm btn-error" on:click={() => confirmDelete(id)}>
+                  <button class="btn btn-sm btn-error" on:click={() => removeFile(id)}>
                     <XCircle class="h-4 w-4" />Delete
                   </button>
                 {/if}
@@ -475,11 +468,8 @@
       <button class="btn btn-block btn-neutral" on:click={() => modalCopy(selectedFile?.cid, `CID copied`)}>
         <Copy class="h-4 w-4" />Copy file CID
       </button>
-      <button class="btn btn-block btn-neutral" on:click={() => { toast("Not implemented...", {icon: "🌚"}); modalActions.close();}}>
-        <Info class="h-4 w-4" />File properties
-      </button>
-      <button class="btn btn-block btn-error" on:click={() => { confirmDelete(selectedFile?.id); modalActions.close();}}>
-        <XCircle class="h-4 w-4" />Delete file
+      <button class="btn btn-block btn-error" on:click={() => { modalRemove.showModal(); modalActions.close(); }}>
+        <XCircle class="h-4 w-4" />Remove file
       </button>
     </div>
   </div>
@@ -487,3 +477,16 @@
     <button>close</button>
   </form>
 </dialog>
+
+<Confirm bind:dialogConfirm={modalRemove}>
+  <p slot="message" class="align-middle inline-block text-lg text-center">
+    Remove file from local storage? [affects this device only]
+  </p>
+  <button slot="button-cancel" class="btn btn-block btn-neutral" on:click={() => { modalRemove.close(); }}>
+    Cancel
+  </button>
+  <button slot="button-confirm" class="btn btn-block btn-error"
+          on:click={async () => { modalRemove.close(); await removeFile(selectedFile?.id); }}>
+    Remove
+  </button>
+</Confirm>

@@ -21,8 +21,9 @@
   import { removeStorageProvider } from "$lib/lib/storageProvider/remove";
   import { setupStorageProvider } from "$lib/lib/storageProvider/setupProvider";
   import { syncUploads } from "$lib/lib/storageProvider/syncUploads.js";
-  import { isTelegramWebApp } from "$lib/lib/utils.js";
-  import WebApp from "@twa-dev/sdk";
+
+  import Confirm from "$lib/ui/modal/confirm.svelte";
+
 
   const storageProviderApiKey = $storageProvider.apiKey;
 
@@ -31,24 +32,14 @@
   $: walletPrivateKey = $wallet.privateKey;
   $: accountBgImage = $wallet.publicKey ? blo($wallet.publicKey, 256) : "";
 
+  let modalDelete;
+  let modalRenew;
 
   /** Handle keypress on address */
   function copyOnKeypress(text, event) {
     if (event.keyCode === 13 || event.keyCode === 32) {
       copyText(text);
       toast.success("Address copied"); }
-  }
-
-  async function confirmAccountDelete() {
-    const message = "WARNING! Your wallet (mnemonic & private key) and files will be deleted from this device! This can't be undone! Make sure to save mnemonic and private key";
-
-    if (isTelegramWebApp()) {
-      WebApp.showConfirm(message, async function(ok) {
-        if (ok) await deleteAccount();
-      });
-    } else {
-
-    }
   }
 
   /** Delete account from local storage */
@@ -118,6 +109,7 @@
   }*/
 </script>
 
+
 <main class="flex-1 overflow-y-scroll px-3">
   <div class="mb-8">
     {#if !isEmpty($wallet)}
@@ -150,7 +142,7 @@
         </div>
       </div>
       <div class="form-control">
-        <button class="btn btn-error mb-2" on:click={confirmAccountDelete}>
+        <button class="btn btn-error mb-2" on:click={() =>{ modalDelete.showModal(); }}>
           <XCircle class="h-4 w-4" /> Delete wallet
         </button>
       </div>
@@ -174,10 +166,38 @@
         <button class="btn btn-neutral shrink" on:click={resyncFiles}>
           <RefreshCw class="h-4 w-4" /> Resync files
         </button>
-        <button class="btn btn-neutral grow" on:click={() => requestNewApiKey($wallet.publicKey, $wallet.privateKey)}><Plug class="h-4 w-4" />Renew ApiKey</button>
+        <button class="btn btn-neutral grow" on:click={() =>{ modalRenew.showModal(); }}><Plug class="h-4 w-4" />Renew ApiKey</button>
       </div>
     {:else}
       <p>Create or restore an account to setup a storage provider</p>
     {/if}
   </div>
 </main>
+
+<Confirm bind:dialogConfirm={modalDelete}>
+  <p slot="message" class="align-middle inline-block text-center text-lg">
+    <strong class="text-error">WARNING!</strong> Your wallet, mnemonic, private key and files list will be deleted from this device! This can't be undone! Make sure to save mnemonic and private key
+  </p>
+  <button slot="button-cancel" class="btn btn-block btn-neutral"
+          on:click={() => { modalDelete.close(); }}>
+    Cancel
+  </button>
+  <button slot="button-confirm" class="btn btn-block btn-error"
+          on:click={async () => { await deleteAccount(); modalDelete.close(); }}>
+    Delete
+  </button>
+</Confirm>
+
+<Confirm bind:dialogConfirm={modalRenew}>
+  <p slot="message" class="align-middle inline-block text-center text-lg">
+    Do you want to renew the API key?
+  </p>
+  <button slot="button-cancel" class="btn btn-block btn-neutral"
+          on:click={() => { modalRenew.close(); }}>
+    Cancel
+  </button>
+  <button slot="button-confirm" class="btn btn-block btn-primary"
+          on:click={async () => { modalRenew.close(); await requestNewApiKey($wallet.publicKey, $wallet.privateKey); }}>
+    Renew
+  </button>
+</Confirm>
