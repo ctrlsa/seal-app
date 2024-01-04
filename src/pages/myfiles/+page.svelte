@@ -37,6 +37,7 @@
   import FilePreview from "./ui/filePreview.svelte";
   import StackedListItem from "$shared/ui/list/stackedItem.svelte";
   import UploadButton from "$shared/ui/button/upload.svelte";
+  import Action from "$lib/ui/modal/action.svelte";
   import Confirm from "$lib/ui/modal/confirm.svelte";
 
 
@@ -72,6 +73,7 @@
 
   // Remove dialog
   let modalRemove;
+  let modalAction;
 
   // InView options to set the root element
   let inViewOptionsScroll = {
@@ -138,13 +140,13 @@
       url: url
     };
 
-    modalActions.showModal();
+    modalAction.showModal();
   }
 
   const modalCopy = (text, toastText) => {
     copyText(text).then(() => toast.success(toastText));
 
-    modalActions.close();
+    modalAction.close();
   }
 
   const inviewHandleScroll = (event) => {
@@ -358,6 +360,7 @@
           <Search class="h-6 w-6" />
         </button>
         <details class="dropdown dropdown-end" open={dropdownSortOpen}>
+          <!-- svelte-ignore a11y-no-redundant-roles -->
           <summary
             tabindex="0" role="button" class="btn btn-ghost px-2.5 py-2 mr-0.5"
             on:click|preventDefault={() => {dropdownSortOpen = !dropdownSortOpen}}
@@ -395,8 +398,11 @@
 
       <StackedListItem>
         <div class="flex w-full gap-x-3">
-          <div class="flex-none w-24 h-24 shrink-0 grow-0">
-            <a href="" on:click={() => openLink(url)}><FilePreview mimeType={mimeType} url={url} alt="" /></a>
+          <div role="button" tabindex="0" class="flex-none w-24 h-24 shrink-0 grow-0"
+               on:click={() => openLink(url)}
+               on:keypress={() => openLink(url)}
+          >
+            <FilePreview mimeType={mimeType} url={url} alt="" />
           </div>
 
           <div class="flex flex-1 flex-col w-16">
@@ -453,30 +459,23 @@
   {/if}
 </ul>
 
-<dialog id="modalActions" class="modal modal-bottom">
-  <div class="modal-box p-4">
-    <div class="mb-5 mt-2">
-      <p class="align-middle break-all font-bold text-xl inline-block">
-        <File class="h-5.5 w-5.5 inline-block align-text-top" /> {selectedFile?.name}
-      </p>
-    </div>
+<Action bind:dialogAction={modalAction}>
+  <span slot="title">
+    <File class="h-5.5 w-5.5 inline-block align-text-top" /> {selectedFile?.name}
+  </span>
 
-    <div class="flex flex-col w-full justify-start items-end gap-y-1.5">
-      <button class="btn btn-block btn-neutral" on:click={() => modalCopy(selectedFile?.url, `File URL copied`)}>
-        <Copy class="h-4 w-4" />Copy file link (URL)
-      </button>
-      <button class="btn btn-block btn-neutral" on:click={() => modalCopy(selectedFile?.cid, `CID copied`)}>
-        <Copy class="h-4 w-4" />Copy file CID
-      </button>
-      <button class="btn btn-block btn-error" on:click={() => { modalRemove.showModal(); modalActions.close(); }}>
-        <XCircle class="h-4 w-4" />Remove file
-      </button>
-    </div>
+  <div slot="buttons" class="flex flex-col w-full justify-start items-end gap-y-1.5">
+    <button class="btn btn-block btn-neutral" on:click={() => modalCopy(selectedFile?.url, `File URL copied`)}>
+      <Copy class="h-4 w-4" />Copy file link (URL)
+    </button>
+    <button class="btn btn-block btn-neutral" on:click={() => modalCopy(selectedFile?.cid, `CID copied`)}>
+      <Copy class="h-4 w-4" />Copy file CID
+    </button>
+    <button class="btn btn-block btn-error" on:click={() => { modalRemove.showModal(); modalAction.close(); }}>
+      <XCircle class="h-4 w-4" />Remove file
+    </button>
   </div>
-  <form method="dialog" class="modal-backdrop">
-    <button>close</button>
-  </form>
-</dialog>
+</Action>
 
 <Confirm bind:dialogConfirm={modalRemove}>
   <p slot="message" class="align-middle inline-block text-lg text-center">
