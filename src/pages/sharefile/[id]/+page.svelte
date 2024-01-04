@@ -1,37 +1,45 @@
 <script>
-  import QR from '@svelte-put/qr/svg/QR.svelte';
   import { copyText } from "svelte-copy";
+  import QR from "@svelte-put/qr/svg/QR.svelte";
   import toast from "svelte-french-toast";
+  import WebApp from "@twa-dev/sdk";
 
   import { goto } from "$app/navigation";
-  import { shareLink } from "$lib/lib/utils.js";
+  import { shareLink } from "$lib/lib/utils";
 
   /** Icons & Assets */
   import Copy from "svelte-lucide/Copy.svelte";
+  import Cube from "$lib/assets/images/cube-blue.svg";
   import Share2 from "svelte-lucide/Share2.svelte";
   import Telegram from "svelte-simples/Telegram.svelte";
-  import Cube from "$lib/assets/images/cube-blue.svg";
-  import WebApp from "@twa-dev/sdk";
 
 
   export let data;
 
+  const copiedMessage = "File URL copied";
 
-  /** Copy now and go away */
-  const copySonic = (text, toastText) => {
+  /** Copy it and go away */
+  const copySonic = (text, toastText, goBack = true) => {
     copyText(text).then(() => {
-      WebApp.BackButton.hide();
       toast.success(toastText);
-      goto("/myfiles", { replaceState: true });
+
+      if (goBack) {
+        WebApp.BackButton.hide();
+        goto("/myfiles", { replaceState: true });
+      }
     });
   }
 </script>
 
 <main class="flex-1 px-3 items-center text-center mt-4">
-  <h1 class="font-bold text-xl break-all px-1">{data.name}</h1>
+  <button class="font-bold text-xl break-all px-1"
+          on:click={() => copySonic(data.url, copiedMessage, false)}>{data.name}</button>
 
   <div class="flex flex-col mb-8 mt-4 items-center">
-    <div class="bg-white p-2 rounded-lg">
+    <div role="button" tabindex="0" class="bg-white p-2 rounded-lg"
+         on:click={() => copySonic(data.url, copiedMessage, false)}
+         on:keypress={() => copySonic(data.url, copiedMessage, false)}
+    >
       <QR
         data={data.url}
         logo={Cube}
@@ -49,13 +57,20 @@
   </div>
 
   <div class="flex flex-col w-full justify-start items-end gap-y-2 px-2">
-    <button class="btn btn-info btn-block" on:click={() => shareLink(data.url, `SEALED FILE: ` + data.name)}>
+    <button class="btn btn-info btn-block"
+            on:click={() => shareLink(data.url, `SEALED FILE: ` + data.name)}
+    >
       <Telegram class="h-6 w-6" /> Share in Telegram
     </button>
-    <button class="btn btn-neutral btn-block"><Share2 class="h-5 w-5" />Share in other app</button>
-    <button class="btn btn-block" on:click={() => copySonic(data.url, `File URL copied`)}>
+    <button class="btn btn-neutral btn-block"
+            on:click={() => { toast("Not yet implemented...", {icon: "🌚"}); }}
+    >
+      <Share2 class="h-5 w-5" />Share in other app
+    </button>
+    <button class="btn btn-block"
+            on:click={() => copySonic(data.url, copiedMessage)}
+    >
       <Copy class="h-5 w-5" />Copy file link (URL)
     </button>
-
   </div>
 </main>
