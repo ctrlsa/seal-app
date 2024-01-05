@@ -446,8 +446,8 @@
 <Action bind:dialogAction={modalOrderBy}>
   <span slot="title">Sort by</span>
 
-  <div slot="buttons" class="flex flex-col w-full justify-start items-start gap-y-1.5">
-    <div tabindex="-1" class="form-control">
+  <div slot="buttons" class="flex flex-col w-full justify-start items-stretch gap-y-1.5">
+    <div class="form-control" tabindex="-1">
       <label class="label cursor-pointer">
         <span class="label-text">Name</span>
         <input
@@ -455,7 +455,7 @@
           bind:group={orderBy} on:click={() => { orderByDesc = !orderByDesc; modalOrderBy.close(); }} checked />
       </label>
     </div>
-    <div tabindex="-1" class="form-control">
+    <div class="form-control" tabindex="-1">
       <label class="label cursor-pointer">
         <span class="label-text">Uploaded</span>
         <input
