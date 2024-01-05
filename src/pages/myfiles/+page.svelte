@@ -54,6 +54,7 @@
   let searchBoxVisible = false;
   let searchQuery = "";
   let orderBy = "created";
+  let orderByDesc = true;
   let page = 1;
 
   // File list element binding, vertical scroll position, scroll direction
@@ -301,11 +302,20 @@
     }
 
     // Get filtered files collection
-    let collection =
-      db.files
-        .orderBy(orderBy)
-        .reverse()
-        .filter(filter);
+    let collection;
+
+    if (orderByDesc) {
+      collection =
+        db.files
+          .orderBy(orderBy)
+          .reverse()
+          .filter(filter);
+    } else {
+      collection =
+        db.files
+          .orderBy(orderBy)
+          .filter(filter);
+    }
 
     // Get all files
     let allFiles = await db.files.toArray();
@@ -442,14 +452,15 @@
         <span class="label-text">Name</span>
         <input
           type="radio" value="name" class="radio ml-2 checked:bg-primary"
-          bind:group={orderBy} on:click={() => { modalOrderBy.close(); }} checked />
+          bind:group={orderBy} on:click={() => { orderByDesc = !orderByDesc; modalOrderBy.close(); }} checked />
       </label>
     </div>
-    <div tabindex="-1" class="form-control" on:focusout={() => { modalOrderBy.close(); }}>
+    <div tabindex="-1" class="form-control">
       <label class="label cursor-pointer">
         <span class="label-text">Uploaded</span>
         <input
-          type="radio" bind:group={orderBy} on:click={() => { modalOrderBy.close(); }} value="created" class="radio ml-2 checked:bg-primary" checked />
+          type="radio" value="created" class="radio ml-2 checked:bg-primary"
+          bind:group={orderBy} on:click={() => { orderByDesc = !orderByDesc; modalOrderBy.close(); }} checked />
       </label>
     </div>
   </div>
