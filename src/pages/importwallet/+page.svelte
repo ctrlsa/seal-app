@@ -13,19 +13,20 @@
   let keyInput;
 
   async function restoreAccount() {
-    await importWallet(keyInput, importType);
+    // Importing wallet
+    await toast.promise(importWallet(keyInput, importType), {
+      loading: "Restoring account",
+      success: "Account restored",
+      error: "Failed to restore account"
+    });
 
     // Setup storage provider for a new wallet (request API key)
     if (!isEmpty(get(wallet))) {
-      await setupStorageProvider($wallet.publicKey, $wallet.privateKey);
-    }
-
-    toast.success("Account restored");
-
-    try {
-      //await setupStorageProvider($wallet.publicKey, $wallet.privateKey);
-    } catch (e) {
-
+      await toast.promise(setupStorageProvider($wallet.publicKey, $wallet.privateKey), {
+        loading: "Setting up storage provider",
+        success: "Storage provider setup complete",
+        error: "Failed to setup storage provider"
+      });
     }
 
     goto("/myfiles", { replaceState: true });
