@@ -337,26 +337,29 @@
 
 <div class="flex-none px-2">
   <div class="flex bg-base-300 rounded-lg py-1 px-1.5 pr-1 w-full items-center">
-    <div class="flex-1 pl-2">
+    <div class="flex-1 pl-1.5">
       {#if searchBoxVisible}
         <input type="text" placeholder="Search" class="input input-bordered input-sm w-full"
-               in:slide={{ delay: 100, axis: 'x', easing: quintOut }} bind:value={searchQuery}
+               bind:value={searchQuery} in:slide={{ delay: 100, axis: 'x', easing: quintOut }}
         />
       {:else}
-        <div class="w-full mr-1.5" role="button" tabindex="0" in:slide={{ delay: 100, easing: quintOut }}
+        <div class="flex w-full" role="button" tabindex="0"
+             in:slide={{ delay: 100, easing: quintOut }}
              on:click={updateStorageInfo} on:keypress={updateStorageInfo}
         >
           {#if $storageInfo.used === 0 && $storageInfo.limit === 0}
             <span class="loading loading-infinity loading-md"></span>
           {:else}
-            <strong>{ filesize($storageInfo.used, { round: 1 }) }</strong> of { filesize($storageInfo.limit, { round: 1 }) } used
+            <p class="flex-none">
+              <strong>{filesize($storageInfo.used, { round: 1 })}</strong> of { filesize($storageInfo.limit, { round: 1 }) } used
+            </p>
           {/if}
         </div>
       {/if}
     </div>
     <div class="flex justify-end">
       <div class="flex items-stretch">
-        <button class="btn btn-ghost px-2.5 py-2 mr-1" on:click={() => (searchBoxVisible = !searchBoxVisible)}>
+        <button class="btn btn-ghost px-2.5 py-2 ml-1.5 mr-1" on:click={() => (searchBoxVisible = !searchBoxVisible)}>
           <Search class="h-6 w-6" />
         </button>
         <details class="dropdown dropdown-end" open={dropdownSortOpen}>
