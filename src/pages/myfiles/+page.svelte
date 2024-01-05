@@ -50,30 +50,25 @@
   // Files array
   let files;
 
-  // Pagination:
-  let page = 1;
-
-  // Search and sorting
+  // Search, sorting, pagination
   let searchBoxVisible = false;
   let searchQuery = "";
   let orderBy = "created";
-
-  // Modal dialog
-  let modalOpen = false;
-
-  // SortBy dropdown list open/close state
-  let dropdownSortOpen = false;
+  let page = 1;
 
   // File list element binding, vertical scroll position, scroll direction
   let selectedFile;
   let fileListElement;
   let fileListElementY = 0;
   let fileListElementScrollDirection;
-  let isInView;
 
   // Remove dialog
   let modalRemove;
   let modalAction;
+  let modalOrderBy;
+
+  // InView indicator
+  let isInView;
 
   // InView options to set the root element
   let inViewOptionsScroll = {
@@ -362,33 +357,9 @@
         <button class="btn btn-ghost px-2.5 py-2 ml-1.5 mr-1" on:click={() => (searchBoxVisible = !searchBoxVisible)}>
           <Search class="h-6 w-6" />
         </button>
-        <details class="dropdown dropdown-end" open={dropdownSortOpen}>
-          <!-- svelte-ignore a11y-no-redundant-roles -->
-          <summary
-            tabindex="0" role="button" class="btn btn-ghost px-2.5 py-2"
-            on:click|preventDefault={() => {dropdownSortOpen = !dropdownSortOpen}}
-            on:keyup|preventDefault={() => {dropdownSortOpen = !dropdownSortOpen}}
-          >
-            <ArrowDownWideNarrow class="h-6 w-6" />
-          </summary>
-          <div tabindex="-1" id="dropdownSort" class="menu dropdown-content z-[1] p-2 shadow bg-base-100 rounded-box mt-4">
-            <div tabindex="-1" class="form-control">
-              <label class="label cursor-pointer">
-                <span class="label-text">Name</span>
-                <input
-                  type="radio" value="name" class="radio ml-2 checked:bg-primary"
-                  bind:group={orderBy} on:click={() => {dropdownSortOpen = false}} checked />
-              </label>
-            </div>
-            <div tabindex="-1" class="form-control" on:focusout={() => {dropdownSortOpen = false}}>
-              <label class="label cursor-pointer">
-                <span class="label-text">Uploaded</span>
-                <input
-                  type="radio" bind:group={orderBy} on:click={() => {dropdownSortOpen = false}} value="created" class="radio ml-2 checked:bg-primary" checked />
-              </label>
-            </div>
-          </div>
-        </details>
+        <button class="btn btn-ghost px-2.5 py-2" on:click={() => { modalOrderBy.showModal(); }}>
+          <ArrowDownWideNarrow class="h-6 w-6" />
+        </button>
       </div>
     </div>
   </div>
@@ -461,6 +432,28 @@
     </StackedListItem>
   {/if}
 </ul>
+
+<Action bind:dialogAction={modalOrderBy}>
+  <span slot="title">Sort by</span>
+
+  <div slot="buttons" class="flex flex-col w-full justify-start items-start gap-y-1.5">
+    <div tabindex="-1" class="form-control">
+      <label class="label cursor-pointer">
+        <span class="label-text">Name</span>
+        <input
+          type="radio" value="name" class="radio ml-2 checked:bg-primary"
+          bind:group={orderBy} on:click={() => { modalOrderBy.close(); }} checked />
+      </label>
+    </div>
+    <div tabindex="-1" class="form-control" on:focusout={() => { modalOrderBy.close(); }}>
+      <label class="label cursor-pointer">
+        <span class="label-text">Uploaded</span>
+        <input
+          type="radio" bind:group={orderBy} on:click={() => { modalOrderBy.close(); }} value="created" class="radio ml-2 checked:bg-primary" checked />
+      </label>
+    </div>
+  </div>
+</Action>
 
 <Action bind:dialogAction={modalAction}>
   <span slot="title">
