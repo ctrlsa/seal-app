@@ -5,6 +5,8 @@
   initBackButton();
 </script>
 
-<Navbar>Settings</Navbar>
+<div class="flex flex-col h-screen">
+  <Navbar>Settings</Navbar>
 
-<slot />
+  <slot />
+</div>

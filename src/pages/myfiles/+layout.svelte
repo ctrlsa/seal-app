@@ -7,6 +7,8 @@
   let address = $wallet.address;
 </script>
 
-<Navbar address={address}>My Files</Navbar>
+<div class="flex flex-col h-screen">
+  <Navbar address={address}>My Files</Navbar>
 
-<slot />
+  <slot />
+</div>
