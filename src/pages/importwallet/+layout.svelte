@@ -2,6 +2,9 @@
   import Navbar from "$widgets/navbar.svelte";
 </script>
 
-<Navbar>Restore account</Navbar>
 
-<slot />
+<div class="flex flex-col h-screen">
+  <Navbar>Restore account</Navbar>
+
+  <slot />
+</div>

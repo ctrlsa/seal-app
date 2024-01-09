@@ -5,6 +5,8 @@
   initBackButton();
 </script>
 
-<Navbar>Share file</Navbar>
+<div class="flex flex-col h-screen">
+  <Navbar>Share file</Navbar>
 
-<slot />
+  <slot />
+</div>

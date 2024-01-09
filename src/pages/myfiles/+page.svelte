@@ -2,7 +2,6 @@
   import { onMount } from "svelte";
   import { slide } from "svelte/transition";
   import { quintOut } from "svelte/easing";
-  import { copyText } from "svelte-copy";
   import { liveQuery } from "dexie";
   import { filesize } from "filesize";
   import toast from "svelte-french-toast";
@@ -10,18 +9,16 @@
   import { upload, getBalance } from "@lighthouse-web3/sdk";
   import { inview } from "svelte-inview";
   import InfiniteLoading from "svelte-infinite-loading";
+  import "@vime/core/themes/default.css";
   import { goto } from "$app/navigation";
 
   /** Icons */
   import ArrowDownWideNarrow from "svelte-lucide/ArrowDownWideNarrow.svelte";
-  import Copy from "svelte-lucide/Copy.svelte";
   import ExternalLink from "svelte-lucide/ExternalLink.svelte";
-  import Info from "svelte-lucide/Info.svelte";
   import Plus from "svelte-lucide/Plus.svelte";
   import Share2 from "svelte-lucide/Share2.svelte";
   import XCircle from "svelte-lucide/XCircle.svelte";
   import MoreVertical from "svelte-lucide/MoreVertical.svelte";
-  import File from "svelte-lucide/File.svelte";
   import Search from "svelte-lucide/Search.svelte";
 
   /** Lib imports */
@@ -38,7 +35,6 @@
   import StackedListItem from "$shared/ui/list/stackedItem.svelte";
   import UploadButton from "$shared/ui/button/upload.svelte";
   import Action from "$lib/ui/modal/action.svelte";
-  import Confirm from "$lib/ui/modal/confirm.svelte";
 
 
   // Storage provider main data
@@ -58,14 +54,11 @@
   let page = 1;
 
   // File list element binding, vertical scroll position, scroll direction
-  let selectedFile;
   let fileListElement;
   let fileListElementY = 0;
   let fileListElementScrollDirection;
 
   // Remove dialog
-  let modalRemove;
-  let modalAction;
   let modalOrderBy;
 
   // InView indicator
@@ -127,23 +120,6 @@
 
     updateStorageInfo();
   });
-
-  const openModal = (id, cid, name, url) => {
-    selectedFile = {
-      id: id,
-      cid: cid,
-      name: name,
-      url: url
-    };
-
-    modalAction.showModal();
-  }
-
-  const modalCopy = (text, toastText) => {
-    copyText(text).then(() => toast.success(toastText));
-
-    modalAction.close();
-  }
 
   const inviewHandleScroll = (event) => {
     const { inView, entry, scrollDirection, observer, node } = event.detail;
@@ -245,13 +221,7 @@
   async function uploadFile(file, apiKey) {
     uploadProgress = 0;
 
-    // Push file to lighthouse node
-    // Both file and folder are supported by upload function
-    // Third parameter is for multiple files, if multiple files are to be uploaded at once make it true
-    // Fourth parameter is the deal parameters, default null
     const output = await upload(file, apiKey, false, null, progressCallback);
-
-    //console.log(output.data);
 
     if (output.data && output.data.Hash) {
       return output.data;
@@ -260,20 +230,20 @@
     return output;
   }
 
-  const removeFile = async (id) => {
-    try {
-      await db.files.delete(id);
-      toast.success("File removed");
-    } catch (e) {
-      console.error(e);
-    }
-  }
-
   const setStatus = async (id, status) => {
     try {
       await db.files.update(id, {
         "status": status
       });
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  const removeFile = async (id) => {
+    try {
+      await db.files.delete(id);
+      toast.success("File removed");
     } catch (e) {
       console.error(e);
     }
@@ -295,10 +265,12 @@
   $: files = liveQuery(async () => {
     let filter;
 
-    if (searchQuery.length !== 46) {
-      filter = file => file.name.toLowerCase().startsWith(searchQuery.toLowerCase());
-    } else {
+    if (searchQuery.length === 46) {
       filter = file => file.cid.startsWith(searchQuery);
+    } else if (searchQuery.startsWith(".")) {
+        filter = file => file.name.toLowerCase().endsWith(searchQuery.toLowerCase());
+    } else {
+      filter = file => file.name.toLowerCase().startsWith(searchQuery.toLowerCase());
     }
 
     // Get filtered files collection
@@ -375,7 +347,7 @@
   </div>
 </div>
 
-<ul role="list" class="flex-1 divide-y divide-neutral-900 w-full list-none overflow-y-scroll px-2" bind:this={fileListElement}>
+<ul role="list" class="flex-1 divide-y divide-neutral-900 w-full list-none overflow-y-scroll overscroll-none px-2" bind:this={fileListElement}>
   {#if $files}
     {#each $files as currentFile, index (currentFile.id)}
       {@const { id, cid, pid, name, size, mimeType, status, encryption, created, updated, protocol, storageProvider, txHash, publicKey, url } = currentFile }
@@ -383,8 +355,8 @@
       <StackedListItem>
         <div class="flex w-full gap-x-3">
           <div role="button" tabindex="0" class="flex-none w-24 h-24 shrink-0 grow-0"
-               on:click={() => openLink(url)}
-               on:keypress={() => openLink(url)}
+               on:click={() => goto("/file/details/" + id)}
+               on:keypress={() => goto("/file/details/" + id)}
           >
             <FilePreview mimeType={mimeType} url={url} alt="" />
           </div>
@@ -417,7 +389,9 @@
                   <Share2 class="h-4 w-4" />Share
                 </button>
                 <button class="btn btn-sm btn-neutral"
-                  on:click={() => openModal(id, cid, name, url)}>
+                        on:click={() => goto("/file/details/" + id)}
+                        on:keypress={() => goto("/file/details/" + id)}
+                >
                   <MoreVertical class="h-4 w-4" />
                 </button>
               {:else}
@@ -465,34 +439,3 @@
     </div>
   </div>
 </Action>
-
-<Action bind:dialogAction={modalAction}>
-  <span slot="title">
-    <File class="h-5.5 w-5.5 inline-block align-text-top" /> {selectedFile?.name}
-  </span>
-
-  <div slot="buttons" class="flex flex-col w-full justify-start items-end gap-y-1.5">
-    <button class="btn btn-block btn-neutral" on:click={() => modalCopy(selectedFile?.url, `File URL copied`)}>
-      <Copy class="h-4 w-4" />Copy file link (URL)
-    </button>
-    <button class="btn btn-block btn-neutral" on:click={() => modalCopy(selectedFile?.cid, `CID copied`)}>
-      <Copy class="h-4 w-4" />Copy file CID
-    </button>
-    <button class="btn btn-block btn-error" on:click={() => { modalRemove.showModal(); modalAction.close(); }}>
-      <XCircle class="h-4 w-4" />Remove file
-    </button>
-  </div>
-</Action>
-
-<Confirm bind:dialogConfirm={modalRemove}>
-  <p slot="message" class="align-middle inline-block text-lg text-center">
-    Remove file from local storage? [affects this device only]
-  </p>
-  <button slot="button-cancel" class="btn btn-block btn-neutral" on:click={() => { modalRemove.close(); }}>
-    Cancel
-  </button>
-  <button slot="button-confirm" class="btn btn-block btn-error"
-          on:click={async () => { modalRemove.close(); await removeFile(selectedFile?.id); }}>
-    Remove
-  </button>
-</Confirm>
