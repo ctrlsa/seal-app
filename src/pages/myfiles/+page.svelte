@@ -385,7 +385,7 @@
                 <button class="btn btn-sm btn-neutral" on:click={() => openLink(url)}>
                   <ExternalLink class="h-4 w-4" />Open
                 </button>
-                <button class="btn btn-sm btn-neutral" on:click={() => goto("/sharefile/" + id)}>
+                <button class="btn btn-sm btn-neutral" on:click={() => goto("/file/share/" + id)}>
                   <Share2 class="h-4 w-4" />Share
                 </button>
                 <button class="btn btn-sm btn-neutral"

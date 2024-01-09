@@ -54,6 +54,7 @@
     });
   }
 
+  /** Remove file */
   const removeFile = async (id) => {
     try {
       await db.files.delete(id);
@@ -66,6 +67,7 @@
     }
   }
 </script>
+
 
 <!-- File preview -->
 <div class="flex-none w-full mb-2.5">

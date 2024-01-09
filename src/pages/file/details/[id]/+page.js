@@ -1,4 +1,4 @@
-import { error } from '@sveltejs/kit';
+import { error } from "@sveltejs/kit";
 
 import { db } from "$shared/lib/db";
 import { filesize } from "filesize";
