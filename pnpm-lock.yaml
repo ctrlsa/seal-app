@@ -81,10 +81,10 @@ devDependencies:
     version: 1.0.3
   '@sveltejs/adapter-static':
     specifier: ^3.0.1
-    version: 3.0.1(@sveltejs/kit@2.1.0)
+    version: 3.0.1(@sveltejs/kit@2.1.1)
   '@sveltejs/kit':
-    specifier: ^2.1.0
-    version: 2.1.0(@sveltejs/vite-plugin-svelte@3.0.1)(svelte@4.2.8)(vite@5.0.11)
+    specifier: ^2.1.1
+    version: 2.1.1(@sveltejs/vite-plugin-svelte@3.0.1)(svelte@4.2.8)(vite@5.0.11)
   '@sveltejs/vite-plugin-svelte':
     specifier: ^3.0.1
     version: 3.0.1(svelte@4.2.8)(vite@5.0.11)
@@ -1059,16 +1059,16 @@ packages:
       qrcode-generator: 1.4.4
     dev: true
 
-  /@sveltejs/adapter-static@3.0.1(@sveltejs/kit@2.1.0):
+  /@sveltejs/adapter-static@3.0.1(@sveltejs/kit@2.1.1):
     resolution: {integrity: sha512-6lMvf7xYEJ+oGeR5L8DFJJrowkefTK6ZgA4JiMqoClMkKq0s6yvsd3FZfCFvX1fQ0tpCD7fkuRVHsnUVgsHyNg==}
     peerDependencies:
       '@sveltejs/kit': ^2.0.0
     dependencies:
-      '@sveltejs/kit': 2.1.0(@sveltejs/vite-plugin-svelte@3.0.1)(svelte@4.2.8)(vite@5.0.11)
+      '@sveltejs/kit': 2.1.1(@sveltejs/vite-plugin-svelte@3.0.1)(svelte@4.2.8)(vite@5.0.11)
     dev: true
 
-  /@sveltejs/kit@2.1.0(@sveltejs/vite-plugin-svelte@3.0.1)(svelte@4.2.8)(vite@5.0.11):
-    resolution: {integrity: sha512-XSIjk9uY705VRpLapfScvOI3bKTfPXntLCdWVsQHhLvkTD7TPNHWh45/6nTT1vQ8rJwWzzA5sLide2YLT4FMsg==}
+  /@sveltejs/kit@2.1.1(@sveltejs/vite-plugin-svelte@3.0.1)(svelte@4.2.8)(vite@5.0.11):
+    resolution: {integrity: sha512-SElOkjJjXU7e9Su25BQeeRRz5jEdXhM4yEJjQjVDks4AAeS2Vs/IgokZ7euNeLTALZLrTnBWZOEzK746MNXVdg==}
     engines: {node: '>=18.13'}
     hasBin: true
     requiresBuild: true
