@@ -38,7 +38,7 @@
   let modalRemove;
 
   const IMAGE_PREVIEW_WIDTH = 960;
-  const IMAGE_PREVIEW_HEIGHT = 540;
+  const IMAGE_PREVIEW_HEIGHT = 640;
   const REDIRECT_ROUTE = "/myfiles";
 
 

@@ -38,10 +38,10 @@
 {#if loaded}
   <img src={src} alt={alt} class={twMerge(baseClass, $$props.class)} />
 {:else if loading}
-  <div class="skeleton h-48 {baseClass}"></div>
+  <div class="skeleton h-56 {baseClass}"></div>
 {:else if failed}
-  <div class="flex bg-base-300 bg-no-repeat bg-origin-content justify-center items-end h-48 {baseClass}"
-       style="background-size: 50% 50%; background-position: center 30%; background-image: url({ImgLoadingFailed});">
-    <p class="mb-8">Failed to load image</p>
+  <div class="flex bg-base-300 bg-no-repeat bg-origin-content justify-center items-end h-56 {baseClass}"
+       style="background-size: 50% 50%; background-position: center 35%; background-image: url({ImgLoadingFailed});">
+    <p class="mb-10">Failed to load image</p>
   </div>
 {/if}
