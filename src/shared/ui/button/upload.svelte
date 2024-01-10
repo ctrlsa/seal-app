@@ -2,6 +2,8 @@
   import { twMerge } from "tailwind-merge";
   import { fly } from 'svelte/transition';
 
+  import { browser } from "$lib/lib/stores";
+
 
   export let value = "";
   export let files;
@@ -9,22 +11,28 @@
 
   let fileInput;
 
+  const flyAnimParams = { y: 150, duration: 390 };
+
+
+  const multiple = $browser.platform.type === "desktop";
 
   function keydown(event) {
     if ([" ", "Enter"].includes(event.key)) {
       fileInput.click(event);
     }
   }
-  function handleClick(event) {
-    //event.preventDefault();
 
+  function handleClick(event) {
     fileInput.click(event);
   }
 </script>
 
-<button tabindex="0" class={twMerge(defaultClass, $$props.class)} on:keydown={keydown} on:click={handleClick} on:focus on:blur on:mouseenter on:mouseleave on:mouseover type="button" {...$$restProps} in:fly={{ y: 150, duration: 390 }} out:fly={{ y: 150, duration: 390 }}>
+<button type="button" tabindex="0" class={twMerge(defaultClass, $$props.class)}
+        on:keydown={keydown} on:click={handleClick} on:focus on:blur on:mouseenter on:mouseleave on:mouseover
+        {...$$restProps} in:fly={flyAnimParams} out:fly={flyAnimParams}>
   <slot />
   <form enctype="multipart/form-data" name="uploadfile" class="contents">
-    <input bind:value bind:files bind:this={fileInput} on:change on:input on:dragenter on:dragleave on:dragover on:drop type="file" class="hidden" />
+    <input type="file" class="hidden"  bind:value bind:files bind:this={fileInput}
+           on:change on:input on:dragenter on:dragleave on:dragover on:drop {multiple} />
   </form>
 </button>

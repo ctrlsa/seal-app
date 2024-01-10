@@ -1,9 +1,12 @@
+import Bowser from "bowser";
 import WebApp from "@twa-dev/sdk";
 
-import { changeTheme, watchThemeChange } from "$lib/lib/theme.js";
-import { isTelegramWebApp } from "$lib/lib/utils.js";
-import { goto } from "$app/navigation";
+import { browser } from "$lib/lib/stores";
+import { isTelegramWebApp } from "$lib/lib/utils";
+import { changeTheme, watchThemeChange } from "$lib/lib/theme";
 
+
+browser.set(Bowser.parse(window.navigator.userAgent));
 
 /** Enable Telegram WebApp initial features */
 if (isTelegramWebApp()) {
