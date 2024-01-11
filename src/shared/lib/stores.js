@@ -13,5 +13,5 @@ export const storageInfo = persisted("storageInfo", { used: 0, limit: 0 });
 /** Storage provider API key and other related data */
 export const storageProvider = persisted("storageProvider", {});
 
-/** Parsed information about browser */
-export const browser = writable("storageProvider");
+/** User client information */
+export const browser = writable("browser");

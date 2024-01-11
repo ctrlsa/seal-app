@@ -1,4 +1,6 @@
 <script>
+  import "@vime/core/themes/default.css";
+
   import WebApp from "@twa-dev/sdk";
   import toast from "svelte-french-toast";
   import { copyText } from "svelte-copy";
@@ -10,7 +12,6 @@
     DefaultControls
   } from "@vime/svelte";
   import { goto } from "$app/navigation";
-  import "@vime/core/themes/default.css";
 
   /** Lib imports */
   import { db } from "$shared/lib/db";
@@ -117,6 +118,7 @@
 
 <!-- File details -->
 <div class="flex-1 w-full mb-5">
+  <div class="divider mt-0 mb-2"></div>
   <div>
     {#if data?.status === uploadStatus.QUEUED}
       <div class="tooltip tooltip-warning tooltip-right" data-tip="File is queued for storing">
