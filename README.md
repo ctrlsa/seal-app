@@ -18,7 +18,7 @@ You can find more detailed version-constrains for Node.js and pnpm in [package.j
 `production only`
 
 You need a domain name to deploy a Telegram WebApp.\
-Create a subdomain on one of your existing domain names (e.g. botapi.example.com) or register a new one.\ 
+Create a subdomain on one of your existing domain names (e.g. botapi.example.com) or register a new one.\
 Delegate the domain name to your server.
 
 ### Telegram bot
@@ -30,8 +30,8 @@ Create a new Telegram bot using [BotFather](https://t.me/BotFather) and obtain a
 `production only`
 
 Make sure that port 80 is available.\
-Run this command to issue a new Let's Encrypt SSL certificate for your domain name via Certbot:\ 
-(NO need to follow official instructions from [Certbot website](https://certbot.eff.org/)) 
+Run this command to issue a new SSL certificate for your domain name via Certbot:\
+(NO need to follow official instructions from [Certbot website](https://certbot.eff.org/))
 
 ```bash
 sudo certbot certonly --standalone -d botapi.example.com
