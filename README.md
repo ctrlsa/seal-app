@@ -17,9 +17,9 @@ You can find more detailed version-constrains for Node.js and pnpm in [package.j
 ### Domain name
 `production only`
 
-You need a domain name to deploy a Telegram WebApp.
-Create a subdomain on one of your existing domain names (e.g. botapi.example.com)
-or register a new one. Delegate the domain name to your server.
+You need a domain name to deploy a Telegram WebApp.\
+Create a subdomain on one of your existing domain names (e.g. botapi.example.com) or register a new one.\ 
+Delegate the domain name to your server.
 
 ### Telegram bot
 `production only`
@@ -29,28 +29,28 @@ Create a new Telegram bot using [BotFather](https://t.me/BotFather) and obtain a
 ### SSL certificate
 `production only`
 
-Issue a new Let's Encrypt SSL certificate for the domain name using [Certbot](https://certbot.eff.org/)
-Make sure that 80 port is available before running the Certbot.
+Make sure that port 80 is available.\
+Run this command to issue a new Let's Encrypt SSL certificate for your domain name via Certbot:\ 
+(NO need to follow official instructions from [Certbot website](https://certbot.eff.org/)) 
 
 ```bash
 sudo certbot certonly --standalone -d botapi.example.com
 ```
 
-Make sure auto update is enabled and working properly.
+Make sure auto update of your certificate is enabled and working properly.
 
 ### Nginx
 `production only`
 
-Seal app uses Nginx as a reverse proxy. You need to install and configure Nginx to make it work.
-
-Copy `config` file to `/etc/nginx/sites-available`
-
-Edit `config` and set proper values:
+Seal app uses Nginx as a reverse proxy.\
+Install Nginx on your machine (if that's not done already).\
+Copy `config` file from `nginx` foder in your project repo to `/etc/nginx/sites-available` on your machine.\
+Edit this `config` file and set proper values:
 1. `server_name` (e.g. `botapi.example.com`)
 2. `ssl_certificate` and `ssl_certificate_key` paths (e.g. `/etc/letsencrypt/live/botapi.example.com/fullchain.pem`)
 3. `root` path under `location /` (e.g. `/home/botapi.example.com/public`)
 
-Create a symbolic link to this config file in the `/etc/nginx/sites-enabled` directory
+Create a symbolic link to this `config` file in `/etc/nginx/sites-enabled` local directory.
 
 Restart Nginx:
 
