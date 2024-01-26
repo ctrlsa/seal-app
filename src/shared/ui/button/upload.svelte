@@ -2,7 +2,7 @@
   import { twMerge } from "tailwind-merge";
   import { fly } from 'svelte/transition';
 
-  import { browser } from "$lib/lib/stores";
+  import { browser } from "$lib/lib/stores/stores";
 
 
   export let value = "";

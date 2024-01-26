@@ -1,12 +1,9 @@
 <script>
-  import { initBackButton } from "$shared/lib/twa";
-  import Navbar from "$widgets/navbar.svelte";
+  import { initBackButton } from "$lib/lib/twa.js";
 
   initBackButton();
 </script>
 
 <div class="flex flex-col h-screen">
-  <Navbar>Settings</Navbar>
-
   <slot />
 </div>

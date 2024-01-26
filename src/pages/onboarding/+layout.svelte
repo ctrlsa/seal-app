@@ -4,7 +4,7 @@
   import { get } from "svelte/store";
   import { goto } from "$app/navigation";
 
-  import { wallet } from "$lib/lib/stores.js";
+  import { wallet } from "$lib/lib/stores/stores";
 
 
   if (!isEmpty(get(wallet))) {

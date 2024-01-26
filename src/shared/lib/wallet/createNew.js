@@ -1,7 +1,7 @@
 import { ethers } from "ethers";
 import { newDelegatedEthAddress } from "@glif/filecoin-address";
 
-import { wallet } from "$lib/lib/stores.js";
+import { wallet } from "$lib/lib/stores/stores";
 
 
 /** Generate and store a new Filecoin f410 wallet */

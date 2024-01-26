@@ -1,7 +1,7 @@
 import { newDelegatedEthAddress } from "@glif/filecoin-address";
 import { ethers } from "ethers";
 
-import { wallet } from "$lib/lib/stores.js";
+import { wallet } from "$lib/lib/stores/stores";
 
 
 export async function importWallet(key, type = "mnemonic") {

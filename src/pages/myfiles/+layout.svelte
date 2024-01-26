@@ -1,5 +1,5 @@
 <script>
-  import { wallet } from "$shared/lib/stores";
+  import { wallet } from "$lib/lib/stores/stores";
 
   import Navbar from "$widgets/navbar.svelte";
 

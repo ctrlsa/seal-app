@@ -4,8 +4,8 @@
   import { get } from "svelte/store";
   import { goto } from "$app/navigation";
 
-  import { wallet } from "$shared/lib/stores";
-  import { createNewWallet } from "$lib/lib/wallet/createNew.js";
+  import { wallet } from "$lib/lib/stores/stores";
+  import { createNewWallet } from "$lib/lib/wallet/createNew";
 
   // Assets import
   import Logo from "$lib/assets/images/logo.jpg";

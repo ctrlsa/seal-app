@@ -14,7 +14,7 @@
   import { goto } from "$app/navigation";
 
   /** Lib imports */
-  import { db } from "$shared/lib/db";
+  import { db } from "$lib/lib/db";
   import { openLink } from "$lib/lib/utils";
   import { uploadStatus } from "$lib/lib/enums/uploadStatus";
 

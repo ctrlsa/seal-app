@@ -2,11 +2,11 @@
   import toast from "svelte-french-toast";
   import { goto } from "$app/navigation";
 
-  import { importWallet } from "$lib/lib/wallet/import.js";
+  import { importWallet } from "$lib/lib/wallet/import";
   import { isEmpty } from "moderndash";
   import { get } from "svelte/store";
-  import { wallet } from "$lib/lib/stores.js";
-  import { setupStorageProvider } from "$lib/lib/storageProvider/setupProvider.js";
+  import { wallet } from "$lib/lib/stores/stores";
+  import { setupStorageProvider } from "$lib/lib/storageProvider/setupProvider";
 
 
   let importType = "mnemonic";

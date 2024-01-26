@@ -1,9 +1,9 @@
-import Bowser from "bowser";
 import WebApp from "@twa-dev/sdk";
+import Bowser from "bowser";
 
-import { browser } from "$lib/lib/stores";
+import { browser } from "$lib/lib/stores/stores";
+import { enableThemeSupport } from "$lib/lib/theme";
 import { isTelegramWebApp } from "$lib/lib/utils";
-import { changeTheme, watchThemeChange } from "$lib/lib/theme";
 
 
 browser.set(Bowser.parse(window.navigator.userAgent));
@@ -37,5 +37,4 @@ if (isTelegramWebApp()) {
 }
 
 /** Monitor Telegram/Browser theme change */
-changeTheme();
-watchThemeChange();
+enableThemeSupport();

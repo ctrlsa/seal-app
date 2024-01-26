@@ -2,6 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 
+@media (prefers-reduced-motion) {
+    ::view-transition-group(*),
+    ::view-transition-old(*),
+    ::view-transition-new(*) {
+        animation: none !important;
+    }
+}
+
 .modal-backdrop {
     background: rgba(0, 0, 0, 0.6);
 }

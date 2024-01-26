@@ -4,7 +4,7 @@ import toast from "svelte-french-toast";
 import { browser } from "$app/environment";
 import { redirect } from "@sveltejs/kit";
 
-import { wallet, storageProvider } from "$lib/lib/stores";
+import { wallet, storageProvider } from "$lib/lib/stores/stores";
 import { isAuthenticated } from "$lib/lib/auth";
 import { setupStorageProvider } from "$lib/lib/storageProvider/setupProvider";
 

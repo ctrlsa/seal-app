@@ -4,7 +4,7 @@ import { ethers } from "ethers";
 
 import { TIMEOUT } from "$lib/lib/constants";
 import { storageProviders } from "$lib/lib/enums/storageProviders"
-import { storageProvider } from "$lib/lib/stores";
+import { storageProvider } from "$lib/lib/stores/stores";
 
 
 /** Setup a storage provider for a wallet/user */

@@ -1,6 +1,6 @@
 import { isEmpty } from "moderndash";
 import { get } from "svelte/store";
-import { wallet } from "$lib/lib/stores.js";
+import { wallet } from "$lib/lib/stores/stores";
 
 
 export function isAuthenticated() {

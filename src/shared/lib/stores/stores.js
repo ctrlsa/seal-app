@@ -1,8 +1,6 @@
-import { persisted } from "svelte-persisted-store";
 import { writable } from "svelte/store";
+import { persisted } from "svelte-persisted-store";
 
-/** App preferences */
-export const preferences = persisted("preferences", {});
 
 /** Encrypted wallet storage */
 export const wallet = persisted("wallet", {});

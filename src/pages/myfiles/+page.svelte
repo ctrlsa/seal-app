@@ -25,7 +25,7 @@
   import { db } from "$shared/lib/db";
   import { nanoid } from "$shared/lib/nanoid";
   import { ITEMS_PER_PAGE } from "$shared/lib/constants";
-  import { storageProvider, storageInfo, wallet } from "$shared/lib/stores";
+  import { storageProvider, storageInfo, wallet } from "$lib/lib/stores/stores";
   import { openLink } from "$shared/lib/utils";
   import { uploadStatus } from "$shared/lib/enums/uploadStatus";
   import { getUploadsCount, syncUploads } from "$shared/lib/storageProvider/syncUploads";
