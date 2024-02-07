@@ -1,17 +1,16 @@
+import { redirect } from "@sveltejs/kit";
 import { isEmpty } from "moderndash";
 import { get } from "svelte/store";
 import toast from "svelte-french-toast";
-import { browser } from "$app/environment";
-import { redirect } from "@sveltejs/kit";
 
-import { wallet, storageProvider } from "$lib/lib/stores/stores";
+import { browser } from "$app/environment";
 import { isAuthenticated } from "$lib/lib/auth";
 import { setupStorageProvider } from "$lib/lib/storageProvider/setupProvider";
+import { storageProvider,wallet } from "$lib/lib/stores/stores";
 
 
 // Disable server-side rendering
 export const ssr = false;
-
 
 export async function load({ url }) {
   if (browser) {
@@ -36,8 +35,6 @@ export async function load({ url }) {
       });
     }
   }
-
-
 
   return {};
 }

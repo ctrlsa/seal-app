@@ -1,9 +1,9 @@
 <script>
-  import toast from "svelte-french-toast";
   import { isEmpty } from "moderndash";
   import { get } from "svelte/store";
-  import { goto } from "$app/navigation";
+  import toast from "svelte-french-toast";
 
+  import { goto } from "$app/navigation";
   import { wallet } from "$lib/lib/stores/stores";
 
 

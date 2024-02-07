@@ -35,7 +35,7 @@ export function watchThemeChange() {
 
 /** Change app theme */
 export function changeTheme(theme) {
-  if (theme && themes.includes(theme)) {
+  if (theme && themes.hasOwnProperty(theme)) {
     document.documentElement.setAttribute("data-theme", theme);
   } else {
     console.error("Theme `" + theme + "` not supported");

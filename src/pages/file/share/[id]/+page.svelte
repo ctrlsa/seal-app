@@ -1,17 +1,16 @@
 <script>
-  import { copyText } from "svelte-copy";
   import QR from "@svelte-put/qr/svg/QR.svelte";
-  import toast from "svelte-french-toast";
   import WebApp from "@twa-dev/sdk";
-
-  import { goto } from "$app/navigation";
-  import { shareLink } from "$lib/lib/utils";
-
-  /** Icons & Assets */
+  import { copyText } from "svelte-copy";
+  import toast from "svelte-french-toast";
   import Copy from "svelte-lucide/Copy.svelte";
-  import Cube from "$lib/assets/images/cube-blue.svg";
   import Share2 from "svelte-lucide/Share2.svelte";
   import Telegram from "svelte-simples/Telegram.svelte";
+
+  import { goto } from "$app/navigation";
+  import Cube from "$lib/assets/images/cube-blue.svg";
+  import { shareLink } from "$lib/lib/utils";
+  import Navbar from "$widgets/navbar.svelte";
 
 
   export let data;
@@ -31,46 +30,50 @@
   }
 </script>
 
-<main class="flex-1 px-3 items-center text-center mt-4">
-  <button class="font-bold text-xl break-all px-1"
-          on:click={() => copySonic(data.url, copiedMessage, false)}>{data.name}</button>
+<div class="flex flex-col h-screen">
+  <Navbar>Share file</Navbar>
 
-  <div class="flex flex-col mb-8 mt-4 items-center">
-    <div role="button" tabindex="0" class="bg-white p-2 rounded-lg"
-         on:click={() => copySonic(data.url, copiedMessage, false)}
-         on:keypress={() => copySonic(data.url, copiedMessage, false)}
-    >
-      <QR
-        data={data.url}
-        logo={Cube}
-        logoRatio={1.1}
-        shape="circle"
-        let:attributes
-        let:innerHTML
+  <main class="flex-1 px-3 items-center text-center mt-4">
+    <button class="font-bold text-xl break-all px-1"
+            on:click={() => copySonic(data.url, copiedMessage, false)}>{data.name}</button>
+
+    <div class="flex flex-col mb-8 mt-4 items-center">
+      <div role="button" tabindex="0" class="bg-white p-2 rounded-lg"
+           on:click={() => copySonic(data.url, copiedMessage, false)}
+           on:keypress={() => copySonic(data.url, copiedMessage, false)}
       >
-        <svg {...attributes} class="w-52 h-52 text-black rounded-box">
-          <!-- eslint-disable-next-line svelte/no-at-html-tags -->
-          {@html innerHTML}
-        </svg>
-      </QR>
+        <QR
+          data={data.url}
+          logo={Cube}
+          logoRatio={1.1}
+          shape="circle"
+          let:attributes
+          let:innerHTML
+        >
+          <svg {...attributes} class="w-52 h-52 text-black rounded-box">
+            <!-- eslint-disable-next-line svelte/no-at-html-tags -->
+            {@html innerHTML}
+          </svg>
+        </QR>
+      </div>
     </div>
-  </div>
 
-  <div class="flex flex-col w-full justify-start items-end gap-y-2 px-2">
-    <button class="btn btn-info btn-block"
-            on:click={() => shareLink(data.url, `SEALED FILE: ` + data.name)}
-    >
-      <Telegram class="h-6 w-6" /> Share in Telegram
-    </button>
-    <button class="btn btn-neutral btn-block"
-            on:click={() => { toast("Not yet implemented...", {icon: "🌚"}); }}
-    >
-      <Share2 class="h-5 w-5" />Share in other app
-    </button>
-    <button class="btn btn-block"
-            on:click={() => copySonic(data.url, copiedMessage)}
-    >
-      <Copy class="h-5 w-5" />Copy file link (URL)
-    </button>
-  </div>
-</main>
+    <div class="flex flex-col w-full justify-start items-end gap-y-2 px-2">
+      <button class="btn btn-info btn-block"
+              on:click={() => shareLink(data.url, `SEALED FILE: ` + data.name)}
+      >
+        <Telegram class="h-6 w-6" /> Share in Telegram
+      </button>
+      <button class="btn btn-neutral btn-block"
+              on:click={() => { toast("Not yet implemented...", {icon: "🌚"}); }}
+      >
+        <Share2 class="h-5 w-5" />Share in other app
+      </button>
+      <button class="btn btn-block"
+              on:click={() => copySonic(data.url, copiedMessage)}
+      >
+        <Copy class="h-5 w-5" />Copy file link (URL)
+      </button>
+    </div>
+  </main>
+</div>

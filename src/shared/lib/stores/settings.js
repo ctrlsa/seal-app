@@ -4,7 +4,7 @@ import { autosave } from "$lib/lib/stores/autosave";
 
 /** Default app settings */
 const defaultSettings = {
-  language: "auto",
+  language: "system",
   theme: "system",
   files: {
     orderBy: "uploaded",

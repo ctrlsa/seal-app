@@ -1,5 +1,5 @@
 <script>
-  import toast, { Toaster } from "svelte-french-toast";
+  import toast from "svelte-french-toast";
   import { isEmpty } from "moderndash";
   import { get } from "svelte/store";
   import { goto } from "$app/navigation";

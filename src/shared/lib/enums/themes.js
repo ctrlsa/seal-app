@@ -1,33 +1,27 @@
 /** DaisyUI themes */
-export const themes = [
-  'acid',
-  'aqua',
-  'autumn',
-  'black',
-  'bumblebee',
-  'business',
-  'cmyk',
-  'coffee',
-  'corporate',
-  'cupcake',
-  'cyberpunk',
-  'dark',
-  'default',
-  'dracula',
-  'emerald',
-  'fantasy',
-  'forest',
-  'garden',
-  'halloween',
-  'lemonade',
-  'light',
-  'lofi',
-  'luxury',
-  'night',
-  'pastel',
-  'retro',
-  'synthwave',
-  'valentine',
-  'winter',
-  'wireframe',
-];
+export const themes = {
+  system: {
+    id: "system",
+    name: "System"
+  },
+  light: {
+    id: "light",
+    name: "Light"
+  },
+  dark: {
+    id: "dark",
+    name: "Dark"
+  },
+  black: {
+    id: "black",
+    name: "Black"
+  },
+/*  forest: {
+    id: "forest",
+    name: "Forest"
+  },
+  sunset: {
+    id: "sunset",
+    name: "Sunset"
+  }*/
+};

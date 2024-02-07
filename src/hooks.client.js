@@ -6,7 +6,8 @@ import { enableThemeSupport } from "$lib/lib/theme";
 import { isTelegramWebApp } from "$lib/lib/utils";
 
 
-browser.set(Bowser.parse(window.navigator.userAgent));
+/** Parse and store user agent data */
+browser.set(Bowser.parse(window?.navigator.userAgent));
 
 /** Enable Telegram WebApp initial features */
 if (isTelegramWebApp()) {
@@ -18,9 +19,11 @@ if (isTelegramWebApp()) {
   // Expand app for better UX
   WebApp.expand();
 
-/*  WebApp.SettingsButton.show().onClick(function() {
+  // Show settings button
+/*  WebApp.SettingsButton.onClick(function() {
     window.open("/settings");
-  });*/
+  });
+  WebApp.SettingsButton.show();*/
 
   // Request write access
   try {
