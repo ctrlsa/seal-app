@@ -1,13 +1,31 @@
 import WebApp from "@twa-dev/sdk";
 import Bowser from "bowser";
+import { isEmpty } from "moderndash";
+import { get } from "svelte/store";
+import toast from "svelte-french-toast";
 
-import { browser } from "$lib/lib/stores/stores";
+import { initPosthog } from "$lib/lib/analytics";
+import { setupStorageProvider } from "$lib/lib/storageProvider/setupProvider.js";
+import { browser, storageProvider, wallet } from "$lib/lib/stores/stores";
 import { enableThemeSupport } from "$lib/lib/theme";
 import { isTelegramWebApp } from "$lib/lib/utils";
 
 
 /** Parse and store user agent data */
 browser.set(Bowser.parse(window?.navigator.userAgent));
+
+/** Ensure the storage provider */
+async function ensureStorageProvider() {
+  if (!isEmpty(get(wallet)) && isEmpty(get(storageProvider))) {
+    const w = get(wallet);
+
+    await toast.promise(setupStorageProvider(w.publicKey, w.privateKey), {
+      loading: "Setting up a storage provider",
+      success: "Storage provider has been set up",
+      error: "Failed to setup storage provider"
+    });
+  }
+}
 
 /** Enable Telegram WebApp initial features */
 if (isTelegramWebApp()) {
@@ -39,5 +57,11 @@ if (isTelegramWebApp()) {
   }
 }
 
+/** We need to make sure that the storage provider is set up */
+ensureStorageProvider();
+
 /** Monitor Telegram/Browser theme change */
 enableThemeSupport();
+
+/** Initialize Posthog analytics */
+//initPosthog();
