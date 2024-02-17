@@ -42,6 +42,9 @@ export function shareLink(url, text = "", instantView = true, openInTelegram = t
 
 /** Return wallet short address (display only!) */
 export function shortAddr(addr) {
+  if (typeof addr !== "string") {
+    throw new TypeError("'addr' argument must be a string");
+  }
   return addr.substring(0, 6) + "..." + addr.substring(addr.length - 4);
 }
 
