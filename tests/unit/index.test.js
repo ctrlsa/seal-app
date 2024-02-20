@@ -5,9 +5,9 @@ import { shortAddr } from '/src/shared/lib/utils';  // Error from Vitest: Refere
 // Unit-tests to verify "shortAddr(addr)" function accepts only a string as "addr" argument
 describe("shortAddr", () => {
 	it("Positive test cases - if 'addr' argument is a string", () => {
-		expect(shortAddr("string")).not.toThrow();
-		expect(shortAddr("234")).not.toThrow();
-		expect(shortAddr("")).not.toThrow();
+		expect(() => shortAddr("string")).not.toThrow();
+		expect(() => shortAddr("234")).not.toThrow();
+		expect(() => shortAddr("")).not.toThrow();
 	});
 	it("Negative test cases - throw an error if 'addr' argument is NOT a string", () => {
 		expect(() => shortAddr(345)).toThrow();
