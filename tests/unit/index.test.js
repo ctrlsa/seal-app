@@ -1,5 +1,27 @@
-import { describe, expect, it, test } from "vitest";
-import { shortAddr } from '/src/shared/lib/utils';  // Error from Vitest: ReferenceError: window is not defined
+import { describe, expect, it, vi } from "vitest";
+import { shortAddr } from '/src/shared/lib/utils';
+import { isAuthenticated } from "$shared/lib/auth"; 
+import { get } from "svelte/store";
+
+
+// Unit-tests for “wallet” variable (?)and for "isAuthenticated" function: 
+// export function isAuthenticated() {
+// 	return !isEmpty(get(wallet));
+//   }
+describe("isAuthenticated", () => {
+	it("must return 'false' for an empty wallet", () => {
+		vi.mocked(get).mockReturnValueOnce({}); // TypeError: vi.mocked(...).mockReturnValueOnce is not a function
+		expect(isAuthenticated()).toBe(false);
+		// vi.mock(get, {}).mock(); // Error: Expression expected
+		// expect(() => isAuthenticated()).toBe(false);
+	});
+	it("must return 'true' for a non-empty wallet", () => {
+		vi.mocked(get).mockReturnValueOnce({address:"0x192837465"});  // TypeError: vi.mocked(...).mockReturnValueOnce is not a function 
+		expect(isAuthenticated()).toBe(true);
+		// vi.mock(get, {address:"0x192837465"}).mock(); // Error: Expression expected
+		// expect(() => isAuthenticated()).toBe(true);
+	});
+});
 
 
 // Unit-tests to verify "shortAddr(addr)" function accepts only a string as "addr" argument
