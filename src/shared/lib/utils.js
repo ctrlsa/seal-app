@@ -40,6 +40,14 @@ export function shareLink(url, text = "", instantView = true, openInTelegram = t
   }
 }
 
+/**
+ * Shortens an address string to a more readable format by showing only the first 6 characters,
+ * followed by an ellipsis, and then the last 4 characters.
+ *
+ * @param {string} addr - The address string to shorten.
+ * @returns {string} - The shortened address string.
+ * @throws {TypeError} - If the `addr` argument is not a string.
+ */
 /** Return wallet short address (display only!) */
 export function shortAddr(addr) {
   if (typeof addr !== "string") {
