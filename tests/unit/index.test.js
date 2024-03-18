@@ -4,25 +4,38 @@ import { isAuthenticated } from "$shared/lib/auth";
 import { get } from "svelte/store";
 import { changeTheme } from '../../src/shared/lib/theme';
 import { themes } from "../../src/shared/lib/enums/themes";
+import { beforeEach } from "vitest";
 
 
 // Unit-tests for “changeTheme(theme)” function: 
-// export function changeTheme(theme) {
-// 	if (theme && themes.hasOwnProperty(theme)) {
-// 	  document.documentElement.setAttribute("data-theme", theme);
-// 	} else {
-// 	  console.error("Theme `" + theme + "` not supported");
-// 	}
-//   }
-describe("changeTheme", () => {
-	it("Positive test cases - if 'theme' argument is a string", () => {
-		expect(() => changeTheme("dark")).not.toThrow();
+describe("changeTheme tests", () => {
+	
+	it("Positive test cases - if 'theme' argument is one of four valid string values", () => {
+		// beforeEach(() => changeTheme("system"));
+		const firstValidTheme = "dark";
+		changeTheme(firstValidTheme);
+		expect(document.documentElement.getAttribute("data-theme")).toEqual(firstValidTheme);
+
+		const secondValidTheme = "light";
+		changeTheme(secondValidTheme);
+		expect(document.documentElement.getAttribute("data-theme")).toEqual(secondValidTheme);		
+		// expect(() => changeTheme("dark")).not.toThrow();
 	});
-	it("Negative test cases ", () => {
+
+	// (?) Is it worth creating "Negative test cases"? If yes - which can make sense?
+	it("Negative test cases ", () => {   
+		// beforeEach(() => changeTheme("system"));
+		// changeTheme(undefined);
+		// expect(document.documentElement.getAttribute("data-theme")).toEqual("system");
+
+
+		// expect((changeTheme(undefined)).equal("system"));
 		// expect(() => changeTheme(undefined)).toThrow(); // AssertionError: expected [Function] to throw an error 
 		// expect(() => changeTheme(null)).toThrow(); // AssertionError: expected [Function] to throw an error 
 	});
 })
+
+
 describe("themes.hasOwnProperty(theme)", () => {
 	it("Positive test cases ... ", () => {
 		expect(() => themes.hasOwnProperty("light")).not.toThrow();
