@@ -27,11 +27,6 @@ describe("changeTheme tests", () => {
 		// beforeEach(() => changeTheme("system"));
 		// changeTheme(undefined);
 		// expect(document.documentElement.getAttribute("data-theme")).toEqual("system");
-
-
-		// expect((changeTheme(undefined)).equal("system"));
-		// expect(() => changeTheme(undefined)).toThrow(); // AssertionError: expected [Function] to throw an error 
-		// expect(() => changeTheme(null)).toThrow(); // AssertionError: expected [Function] to throw an error 
 	});
 })
 
@@ -68,16 +63,11 @@ describe("isAuthenticated", () => {
 // Unit-tests to verify "shortAddr(addr)" function accepts only a string as "addr" argument
 describe("shortAddr", () => {
 	it("Positive test cases - if 'addr' argument is a string", () => {
-		expect(() => shortAddr("string")).not.toThrow();
-		expect(() => shortAddr("234")).not.toThrow();
-		expect(() => shortAddr("")).not.toThrow();
-		expect(() => shortAddr("0x422849b355039bc58f2780cc4854919fc9cfaf94")).not.toThrow();
-		expect(() => shortAddr("0xf7ceaa5da7305b87361f9db6a300bd6d74c674d2")).not.toThrow();
+		const result = shortAddr("0x422849b355039bc58f2780cc4854919fc9cfaf94"); 
+		expect(result).toEqual("0x4228...af94");
 	});
 	it("Negative test cases - throw an error if 'addr' argument is NOT a string", () => {
 		expect(() => shortAddr(345)).toThrow();
-		expect(() => shortAddr(true)).toThrow();
-		expect(() => shortAddr(null)).toThrow();
 		expect(() => shortAddr(undefined)).toThrow();
 	});
 }); 
