@@ -72,6 +72,7 @@
 		"svelte-inview": "^4.0.2",
 		"svelte-persisted-store": "^0.7.0",
 		"tailwind-merge": "^2.2.1",
-		"triplesec": "3.0.27"
+		"triplesec": "3.0.27",
+		"jsdom":"^24.0.0"
 	}
 }

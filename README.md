@@ -24,7 +24,7 @@ Follow these steps to start developing.
 git clone https://github.com/ctrlsa/seal-app.git
 ```
 
-2. Install app dependencies
+2. `cd` to the cloned directory. Then - install app dependencies
 
 ```bash
 pnpm i
