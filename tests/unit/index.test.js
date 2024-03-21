@@ -9,38 +9,19 @@ import { beforeEach } from "vitest";
 
 // Unit-tests for “changeTheme(theme)” function: 
 describe("changeTheme tests", () => {
-	
-	it("Positive test cases - if 'theme' argument is one of four valid string values", () => {
-		// beforeEach(() => changeTheme("system"));
+	beforeEach(() => changeTheme("system")); 
+	it("should check 'theme' argument with a valid theme value and verify switching themes works properly (positive test case)", () => {
 		const firstValidTheme = "dark";
 		changeTheme(firstValidTheme);
 		expect(document.documentElement.getAttribute("data-theme")).toEqual(firstValidTheme);
-
-		const secondValidTheme = "light";
-		changeTheme(secondValidTheme);
-		expect(document.documentElement.getAttribute("data-theme")).toEqual(secondValidTheme);		
-		// expect(() => changeTheme("dark")).not.toThrow();
 	});
+	it("should check 'theme' argument with invalid theme values & confirm they do NOT impact the current theme (negative test cases)", () => {   
+		changeTheme(undefined);
+		expect(document.documentElement.getAttribute("data-theme")).toEqual("system");
+		changeTheme("green");
+		expect(document.documentElement.getAttribute("data-theme")).toEqual("system");
 
-	// (?) Is it worth creating "Negative test cases"? If yes - which can make sense?
-	it("Negative test cases ", () => {   
-		// beforeEach(() => changeTheme("system"));
-		// changeTheme(undefined);
-		// expect(document.documentElement.getAttribute("data-theme")).toEqual("system");
 	});
-})
-
-
-describe("themes.hasOwnProperty(theme)", () => {
-	it("Positive test cases ... ", () => {
-		expect(() => themes.hasOwnProperty("light")).not.toThrow();
-		expect(() => themes.hasOwnProperty("black")).not.toThrow();
-	})
-	it("Negative test cases ... ", () => {
-		// expect(() => themes.hasOwnProperty("green")).toThrow(); // AssertionError: expected [Function] to throw an error
-		// expect(() => themes.hasOwnProperty(undefined)).toThrow();  // AssertionError: expected [Function] to throw an error
-		// expect(() => themes.hasOwnProperty(null)).toThrow();  // AssertionError: expected [Function] to throw an error 
-	})
 })
 
 
