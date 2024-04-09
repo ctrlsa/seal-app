@@ -36,3 +36,23 @@ Top new contributors will get more benefits (Ex.: share of the grant) than those
 
 
 Other sections of this guide are "coming up ..." // Three dots instead of "soon", as let's admit: sometimes "soon" does NOT happen quickly 😜
+
+## Table of contents: 
+
+Roadmap [...] 
+
+"How to get started" [...] 
+
+How to report a bug [...] 
+
+How to submit changes [...] 
+
+Testing [...] 
+
+Code of Conduct [...] 
+
+Who is involved? [...] 
+
+FAQ [...]  
+
+Contacts: @D_peace in Telegram or dmitry.k.sokolov@gmail.com 
