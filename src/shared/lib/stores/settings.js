@@ -3,12 +3,15 @@ import { autosave } from "$lib/lib/stores/autosave";
 
 
 /** Default app settings */
-const defaultSettings = {
+const _DEFAULT_SETTINGS = {
   language: "system",
   theme: "system",
   files: {
     orderBy: "uploaded",
     orderByDesc: true
+  },
+  privacy: {
+    analytics: true
   },
   storage: {
     info: {
@@ -27,7 +30,8 @@ const defaultSettings = {
   },
   wallet: {
     active: "default"
-  }
+  },
+  _version: "001"
 };
 
-export const settings = autosave(SETTINGS_KEY, defaultSettings);
+export const settings = autosave(SETTINGS_KEY, _DEFAULT_SETTINGS);

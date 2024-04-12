@@ -1,6 +1,7 @@
 export const storageProviders = {
   lighthouse: {
-    name: "lighthouse",
+    id: "lighthouse",
+    name: "Lighthouse",
     website: "https://lighthouse.storage",
     protocol: "filecoin",
     gatewayUrl: "https://gateway.lighthouse.storage/ipfs/",

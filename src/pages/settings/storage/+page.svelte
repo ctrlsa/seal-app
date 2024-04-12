@@ -1,6 +1,5 @@
 <script>
   import { isEmpty } from "moderndash";
-  import { get } from "svelte/store";
   import toast from "svelte-french-toast";
   import CloudLightning from "svelte-lucide/CloudLightning.svelte";
   import Plug from "svelte-lucide/Plug.svelte";
@@ -8,15 +7,15 @@
 
   import { goto } from "$app/navigation";
   import { db } from "$lib/lib/db";
-  import { setupStorageProvider } from "$lib/lib/storageProvider/setupProvider";
-  import { syncUploads } from "$lib/lib/storageProvider/syncUploads.js";
-  import { storageProvider,wallet } from "$lib/lib/stores/stores";
+  import { setupStorageProvider } from "$lib/lib/storageProvider/setup.js";
+  import { sync } from "$lib/lib/storageProvider/sync.js";
+  import { state } from "$lib/lib/stores/state";
   import Confirm from "$lib/ui/modal/confirm.svelte";
   import Navbar from "$widgets/navbar.svelte";
 
 
-  const storageProviderApiKey = $storageProvider.apiKey;
 
+  const storageProvider = state.account.storage.provider;
   let modalRenew;
 
 
@@ -24,7 +23,7 @@
   const resyncFiles = async () => {
     await db.files.clear();
 
-    const sfPromise = syncUploads(storageProviderApiKey);
+    const sfPromise = sync(storageProvider.apiKey);
 
     await toast.promise(sfPromise, {
       loading: "Syncing file list",
@@ -37,7 +36,7 @@
 
   /** Request a new API key */
   const requestNewApiKey = async (publicKey, privateKey) => {
-    if (!isEmpty(get(wallet))) {
+    if (!isEmpty(state.wallet)) {
       const sspPromise = setupStorageProvider(publicKey, privateKey);
 
       await toast.promise(sspPromise, {
@@ -55,9 +54,9 @@
 
 <main class="flex-1 overflow-y-scroll px-3">
   <div class="mb-2">
-    {#if !isEmpty($wallet)}
+    {#if !isEmpty(state.wallet)}
       <div class="text-lg mb-5 leading-none capitalize">
-        <a href="{$storageProvider.website}" class="link" target="_blank"><CloudLightning class="h-5 w-5 float-left mr-1" /> {$storageProvider.name}</a>
+        <a href="{storageProvider.website}" class="link" target="_blank"><CloudLightning class="h-5 w-5 float-left mr-1" /> {storageProvider.name}</a>
       </div>
 
       <div class="flex flex-row gap-1.5 mb-3">
@@ -81,7 +80,7 @@
     Cancel
   </button>
   <button slot="button-confirm" class="btn btn-block btn-primary"
-          on:click={async () => { modalRenew.close(); await requestNewApiKey($wallet.publicKey, $wallet.privateKey); }}>
+          on:click={async () => { modalRenew.close(); await requestNewApiKey(state.wallet.publicKey, state.wallet.privateKey); }}>
     Renew
   </button>
 </Confirm>

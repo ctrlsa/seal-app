@@ -2,9 +2,10 @@ import axios from "axios";
 import { getApiKey } from "@lighthouse-web3/sdk";
 import { ethers } from "ethers";
 
-import { TIMEOUT } from "$lib/lib/constants";
+import { TIMEOUT } from "$lib/lib/config";
 import { storageProviders } from "$lib/lib/enums/storageProviders"
-import { storageProvider } from "$lib/lib/stores/stores";
+import { state } from "$lib/lib/stores/state";
+
 
 
 /** Setup a storage provider for a wallet/user */
@@ -46,5 +47,7 @@ export async function setupStorageProvider(publicKey, privateKey, store = true) 
     throw new Error("Could not get a API key");
   }
 
-  if (store) storageProvider.set(provider);
+  if (store) state.account.storage.provider = provider;
+
+  return 1
 }

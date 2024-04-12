@@ -22,13 +22,14 @@
   import Search from "svelte-lucide/Search.svelte";
 
   /** Lib imports */
-  import { db } from "$shared/lib/db";
-  import { nanoid } from "$shared/lib/nanoid";
-  import { ITEMS_PER_PAGE } from "$shared/lib/constants";
-  import { storageProvider, storageInfo, wallet } from "$lib/lib/stores/stores";
-  import { openLink } from "$shared/lib/utils";
-  import { uploadStatus } from "$shared/lib/enums/uploadStatus";
-  import { getUploadsCount, syncUploads } from "$shared/lib/storageProvider/syncUploads";
+  import { analytics } from "$lib/lib/analytics/analytics.js";
+  import { ITEMS_PER_PAGE } from "$lib/lib/config";
+  import { db } from "$lib/lib/db";
+  import { nanoid } from "$lib/lib/nanoid";
+  import { state } from "$lib/lib/stores/state";
+  import { getUploadsCount, sync } from "$lib/lib/storageProvider/sync.js";
+  import { openLink } from "$lib/lib/link";
+  import { uploadStatus } from "$lib/lib/enums/uploadStatus";
 
   /** Component imports */
   import FilePreview from "./ui/filePreview.svelte";
@@ -37,11 +38,12 @@
   import Action from "$lib/ui/modal/action.svelte";
 
 
+
   // Storage provider main data
-  const storageProviderName = $storageProvider.name;
-  const storageProviderProtocol = $storageProvider.protocol;
-  const storageProviderGatewayUrl = $storageProvider.gatewayUrl;
-  const storageProviderApiKey = $storageProvider.apiKey;
+  const storageProviderID = state.account.storage.provider.id;
+  const storageProviderProtocol = state.account.storage.provider.protocol;
+  const storageProviderGatewayUrl = state.account.storage.provider.gatewayUrl;
+  const storageProviderApiKey = state.account.storage.provider.apiKey;
 
   // Files array
   let files;
@@ -80,7 +82,7 @@
   let totalData = 0;
 
   // Wallet public key
-  $: walletPublicKey = $wallet.publicKey;
+  $: walletPublicKey = state.wallet.publicKey;
 
   // Upload button visible/hidden state
   $: uploadButtonVisible = fileListElementY < 100 || fileListElementScrollDirection === "down";
@@ -107,7 +109,7 @@
         //console.log(uploadsCount);
 
         if (uploadsCount > 0) {
-          const sfPromise = syncUploads(storageProviderApiKey);
+          const sfPromise = sync(storageProviderApiKey);
 
           await toast.promise(sfPromise, {
             loading: "Syncing file list",
@@ -157,7 +159,7 @@
         created: dateNow,
         updated: dateNow,
         protocol: storageProviderProtocol,
-        storageProvider: storageProviderName,
+        storageProvider: storageProviderID,
         txHash: undefined,
         publicKey: undefined,
         url: URL.createObjectURL(file)
@@ -190,13 +192,22 @@
             url: storageProviderGatewayUrl + uploadResponse.Hash
           });
 
-          storageInfo.set({
-            used: $storageInfo.used + filesToUpload[i].size,
-            limit: $storageInfo.limit
+          state.account.storage.info.used = state.account.storage.info.used + filesToUpload[i].size;
+
+          analytics.capture("file_uploaded", {
+            filetype: filesToUpload[i].mimeType,
+            storage_protocol: filesToUpload[i].protocol,
+            storage_provider: filesToUpload[i].storageProvider
           });
         } catch (e) {
           await db.files.update(filesToUpload[i].id, {
             "status": uploadStatus.FAILED
+          });
+
+          analytics.capture("file_upload_failed", {
+            filetype: filesToUpload[i].mimeType,
+            storage_protocol: filesToUpload[i].protocol,
+            storage_provider: filesToUpload[i].storageProvider
           });
 
           console.error(e);
@@ -250,15 +261,15 @@
   }
 
   const updateStorageInfo = async() => {
-    storageInfo.set({ used: 0, limit: 0 });
+    state.account.storage.info = { used: 0, limit: 0 };
 
     const balance =  await getBalance(walletPublicKey);
 
     if (balance) {
-      storageInfo.set({
+      state.account.storage.info = {
         used: balance.data.dataUsed,
         limit: balance.data.dataLimit
-      });
+      };
     }
   }
 
@@ -324,11 +335,11 @@
              in:slide={{ delay: 100, easing: quintOut }}
              on:click={updateStorageInfo} on:keypress={updateStorageInfo}
         >
-          {#if $storageInfo.used === 0 && $storageInfo.limit === 0}
+          {#if state.account.storage.info.used === 0 && state.account.storage.info.limit === 0}
             <span class="loading loading-infinity loading-md"></span>
           {:else}
             <p class="flex-none">
-              <strong>{filesize($storageInfo.used, { round: 1 })}</strong> of { filesize($storageInfo.limit, { round: 1 }) } used
+              <strong>{filesize(state.account.storage.info.used, { round: 1 })}</strong> of { filesize(state.account.storage.info.limit, { round: 1 }) } used
             </p>
           {/if}
         </div>

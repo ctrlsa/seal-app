@@ -3,7 +3,7 @@
 
   import { page } from "$app/stores";
   import { HOME_URL } from "$lib/lib/constants";
-  import { isTelegramWebApp } from "$lib/lib/utils";
+  import { isTelegramWebApp } from "$lib/lib/twa";
 
 
   let url = $page.url.pathname;

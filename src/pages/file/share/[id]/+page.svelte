@@ -1,16 +1,21 @@
 <script>
-  import QR from "@svelte-put/qr/svg/QR.svelte";
   import WebApp from "@twa-dev/sdk";
   import { copyText } from "svelte-copy";
   import toast from "svelte-french-toast";
+
+  /** Assets */
   import Copy from "svelte-lucide/Copy.svelte";
   import Share2 from "svelte-lucide/Share2.svelte";
   import Telegram from "svelte-simples/Telegram.svelte";
+  import QR from "@svelte-put/qr/svg/QR.svelte";
+  import Cube from "$lib/assets/images/cube-blue.svg";
+
+  /** Components */
+  import Navbar from "$widgets/navbar.svelte";
 
   import { goto } from "$app/navigation";
-  import Cube from "$lib/assets/images/cube-blue.svg";
-  import { shareLink } from "$lib/lib/utils";
-  import Navbar from "$widgets/navbar.svelte";
+  import { shareLink } from "$lib/lib/link";
+  import { analytics } from "$lib/lib/analytics/analytics.js";
 
 
   export let data;
@@ -18,8 +23,10 @@
   const copiedMessage = "File URL copied";
 
   /** Copy it and go away */
-  const copySonic = (text, toastText, goBack = true) => {
+  const copySonic = async (text, toastText, goBack = true) => {
     copyText(text).then(() => {
+      analytics.capture("file_shared", { via: "clipboard" });
+
       toast.success(toastText);
 
       if (goBack) {

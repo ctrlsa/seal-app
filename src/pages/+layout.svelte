@@ -1,13 +1,15 @@
 <script>
   import "../app.css";
 
-  //import { UmamiAnalytics } from "@sveltinio/services/umami";
   import { Toaster } from "svelte-french-toast";
 
+  import { analytics } from "$lib/lib/analytics/analytics";
   import { goto, onNavigate } from "$app/navigation";
-  //import { _UMAMI } from "$lib/lib/analytics";
+  import { onMount } from "svelte";
 
-
+  onMount(() => {
+    analytics.capture("app_launched", { $event_type: "onetime" });
+  });
 
   /*  /!** Global app transitions *!/
     onNavigate((navigation) => {
@@ -21,14 +23,8 @@
       });
     });*/
 
-  goto("/myfiles", { replaceState: true });
+  //goto("/myfiles", { replaceState: true });
 </script>
-
-<!--<UmamiAnalytics
-  websiteID={_UMAMI.websiteID}
-  srcURL={_UMAMI.srcURL}
-  settings="{_UMAMI.settings}"
-/>-->
 
 <svelte:head>
   <title>Seal</title>

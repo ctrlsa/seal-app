@@ -1,28 +1,28 @@
 <script>
   import { blo } from "blo";
   import { isEmpty } from "moderndash";
-  import { get } from "svelte/store";
   import { copy, copyText } from "svelte-copy";
   import toast from "svelte-french-toast";
+
+  import { goto } from "$app/navigation";
+  import { deleteAccount } from "$lib/lib/account/delete";
+  import { createNewWallet } from "$lib/lib/wallet";
+  import { setupStorageProvider } from "$lib/lib/storageProvider/setup";
+  import { state } from "$lib/lib/stores/state";
+
   import Unlock from "svelte-lucide/Unlock.svelte";
   import Wallet from "svelte-lucide/Wallet.svelte";
   import XCircle from "svelte-lucide/XCircle.svelte";
 
-  import { goto } from "$app/navigation";
-  import { db } from "$lib/lib/db";
-  import { removeStorageProvider } from "$lib/lib/storageProvider/remove";
-  import { setupStorageProvider } from "$lib/lib/storageProvider/setupProvider";
-  import { wallet } from "$lib/lib/stores/stores";
-  import { createNewWallet } from "$lib/lib/wallet/createNew";
-  import { deleteWallet } from "$lib/lib/wallet/delete";
   import Confirm from "$lib/ui/modal/confirm.svelte";
   import Navbar from "$widgets/navbar.svelte";
 
 
-  $: walletAddress = $wallet.address;
-  $: walletMnemonic = $wallet.mnemonicPhrase;
-  $: walletPrivateKey = $wallet.privateKey;
-  $: accountBgImage = $wallet.publicKey ? blo($wallet.publicKey, 256) : "";
+
+  $: walletAddress = state.wallet.address;
+  $: walletMnemonic = state.wallet.mnemonicPhrase;
+  $: walletPrivateKey = state.wallet.privateKey;
+  $: accountBgImage = state.wallet.publicKey ? blo(state.wallet.publicKey, 256) : "";
 
   let modalDelete;
 
@@ -33,20 +33,20 @@
       toast.success("Address copied"); }
   }
 
-  /** Delete account from local storage */
-  const deleteAccount = async () => {
-    await deleteWallet();
-    await removeStorageProvider();
-    await db.files.clear();
+  /** Remove account from local storage **/
+  async function removeAccount() {
+    await toast.promise(deleteAccount(), {
+      loading: "Removing account...",
+      success: "User account removed",
+      error: "Could not remove user account"
+    });
 
-    // Toast some noise
-    toast.success("User account removed");
-    //await goto("/onboarding", { replaceState: true });
+    goto("/onboarding", { replaceState: true });
   }
 
   /** Request a new API key */
   const requestNewApiKey = async (publicKey, privateKey) => {
-    if (!isEmpty(get(wallet))) {
+    if (!isEmpty(state.wallet)) {
       const sspPromise = setupStorageProvider(publicKey, privateKey);
 
       await toast.promise(sspPromise, {
@@ -61,22 +61,17 @@
 
   /** Create new user account (wallet) */
   async function createNewAccount() {
-    if (isEmpty(get(wallet))) {
+    if (isEmpty(state.wallet)) {
       await toast.promise(createNewWallet(), {
         loading: "Creating new account...",
         success: "New account created",
         error: "Could not create a new account"
       }).then(async () => {
-        await requestNewApiKey($wallet.publicKey, $wallet.privateKey);
+        await requestNewApiKey(state.wallet.publicKey, state.wallet.privateKey);
       });
     } else {
       toast.error("Account already exists");
     }
-  }
-
-  /** Go to restore account page */
-  function restoreAccountHandler() {
-    goto("/importwallet", { replaceState: true });
   }
 
   /** Share wallet
@@ -85,11 +80,11 @@
   }*/
 </script>
 
-<Navbar>Wallet</Navbar>
+<Navbar>Accounts</Navbar>
 
 <main class="flex-1 overflow-y-scroll px-3">
   <div class="mb-8">
-    {#if !isEmpty($wallet)}
+    {#if !isEmpty(state.wallet)}
       <div class="hero rounded-box w-full mb-2 bg-repeat-x bg-left-top" style="background-image: url({accountBgImage});">
         <div class="hero-overlay rounded-box bg-opacity-60 w-full"></div>
         <div class="hero-content text-neutral-content w-full">
@@ -127,22 +122,26 @@
     {:else}
       <div class="w-full mb-2">
         <button class="btn btn-primary mr-2" on:click={createNewAccount}>New account</button>
-        <button class="btn btn-neutral" on:click={restoreAccountHandler}>Restore account</button>
+        <button class="btn btn-neutral" on:click={() => goto("/account/import", { replaceState: true })}>Restore account</button>
       </div>
     {/if}
   </div>
 </main>
 
 <Confirm bind:dialogConfirm={modalDelete}>
-  <p slot="message" class="align-middle inline-block text-center text-lg">
-    <strong class="text-error">WARNING!</strong> Your wallet, mnemonic, private key and files list will be deleted from this device! This can't be undone! Make sure to save mnemonic and private key
-  </p>
-  <button slot="button-cancel" class="btn btn-block btn-neutral"
-          on:click={() => { modalDelete.close(); }}>
+  <div slot="message">
+    <h3 class="align-middle inline-block text-xl text-error font-bold pb-1">CAUTION!</h3>
+    <p>
+      Your wallet, mnemonic, private key and files list will be deleted from this device! This can't be undone! Make sure to save mnemonic and private key
+    </p>
+  </div>
+
+  <button slot="button-cancel" class="btn btn-block btn-neutral" on:click={() => { modalDelete.close(); }}>
     Cancel
   </button>
+
   <button slot="button-confirm" class="btn btn-block btn-error"
-          on:click={async () => { await deleteAccount(); modalDelete.close(); }}>
+          on:click={async () => { await removeAccount(); modalDelete.close(); }}>
     Delete
   </button>
 </Confirm>

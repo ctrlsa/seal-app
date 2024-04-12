@@ -1,36 +1,34 @@
 <script>
   import { isEmpty } from "moderndash";
-  import { get } from "svelte/store";
   import toast from "svelte-french-toast";
 
   import { goto } from "$app/navigation";
-  import { setupStorageProvider } from "$lib/lib/storageProvider/setupProvider";
-  import { wallet } from "$lib/lib/stores/stores";
-  import { importWallet } from "$lib/lib/wallet/import";
+  import { analytics } from "$lib/lib/analytics/analytics";
+  import { ANALYTICS_SERVICE } from "$lib/lib/config";
+  import { settings } from "$lib/lib/stores/settings";
+
   import Navbar from "$widgets/navbar.svelte";
+  import { state } from "$lib/lib/stores/state";
+  import { restoreAccount } from "$lib/lib/account/restore";
+
 
 
   let importType = "mnemonic";
   let keyInput;
 
-  async function restoreAccount() {
-    // Importing wallet
-    await toast.promise(importWallet(keyInput, importType), {
-      loading: "Restoring account",
+  /** Restore user account **/
+  async function restoreAcc() {
+    await toast.promise(restoreAccount(keyInput, importType), {
+      loading: "Restoring account...",
       success: "Account restored",
       error: "Failed to restore account"
     });
 
-    // Setup storage provider for a new wallet (request API key)
-    if (!isEmpty(get(wallet))) {
-      await toast.promise(setupStorageProvider($wallet.publicKey, $wallet.privateKey), {
-        loading: "Setting up storage provider",
-        success: "Storage provider setup complete",
-        error: "Failed to setup storage provider"
-      });
+    if (!isEmpty(state.wallet)) {
+      goto("/myfiles", { replaceState: true });
+    } else {
+      goto("/account/import", { replaceState: true });
     }
-
-    goto("/myfiles", { replaceState: true });
   }
 </script>
 
@@ -56,7 +54,7 @@
       <textarea bind:value={keyInput} class="textarea textarea-bordered textarea-md w-full h-28"></textarea>
     </div>
     <div class="grid grid-cols-1 mt-3">
-      <button class="btn btn-primary" on:click={restoreAccount}>Import</button>
+      <button class="btn btn-primary" on:click={restoreAcc}>Restore</button>
     </div>
   </main>
 </div>
