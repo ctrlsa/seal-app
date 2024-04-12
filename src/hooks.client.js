@@ -1,29 +1,88 @@
 import WebApp from "@twa-dev/sdk";
 import Bowser from "bowser";
 import { isEmpty } from "moderndash";
-import { get } from "svelte/store";
-import toast from "svelte-french-toast";
 
-import { initPosthog } from "$lib/lib/analytics";
-import { setupStorageProvider } from "$lib/lib/storageProvider/setupProvider.js";
-import { browser, storageProvider, wallet } from "$lib/lib/stores/stores";
+import { generateUniqueUserID } from "$lib/lib/account/id";
+import { analytics } from "$lib/lib/analytics/analytics";
+import { ANALYTICS_SERVICE } from "$lib/lib/config";
+import { SETTINGS_KEY } from "$lib/lib/constants";
+import { state } from "$lib/lib/stores/state";
+import { settings } from "$lib/lib/stores/settings";
+import { browser } from "$lib/lib/stores/stores";
+import { capitalizeFirstLetter } from "$lib/lib/string";
 import { enableThemeSupport } from "$lib/lib/theme";
-import { isTelegramWebApp } from "$lib/lib/utils";
+import { isTelegramWebApp } from "$lib/lib/twa";
 
+
+
+/** Check settings object version and migrate if possible */
+if (!settings._version) {
+  console.info("⚙️ [SETTINGS:Check] >>> Old version of 'settings' detected");
+  console.info("⚙️ [SETTINGS:Migrate] >>> ☢️ Just nuke them!");
+  localStorage.removeItem(SETTINGS_KEY);
+} else {
+  console.info("⚙️ [SETTINGS:Check] >>> Version is up to date. No action required");
+}
+
+/** Check state object version and migrate if possible */
+if (!state._version) {
+  console.info("🧬 [STATE:Check] >>> Old version of the app 'state' detected");
+  console.info("🧬 [STATE:Migrate] >>> 🔄 Migrating app 'state'...");
+
+  let wallet = localStorage.getItem("wallet");
+  if (null !== wallet) {
+    wallet = JSON.parse(wallet);
+
+    /**
+     * @TODO store wallet in IndexedDB
+     */
+    generateUniqueUserID(wallet.publicKey).then((id) => {
+      state.wallet = {
+        anonymizedID: id,
+        address: wallet.address,
+        publicKey: wallet.publicKey,
+        privateKey: wallet.privateKey,
+        mnemonicPhrase: wallet.mnemonicPhrase
+      };
+    });
+    localStorage.removeItem("wallet");
+  }
+
+  let storageInfo = localStorage.getItem("storageInfo");
+  if (null !== storageInfo) {
+    storageInfo = JSON.parse(storageInfo);
+    state.account.storage.info = storageInfo;
+    localStorage.removeItem("storageInfo");
+  }
+
+  let storageProvider = localStorage.getItem("storageProvider");
+  if (null !== storageProvider) {
+    storageProvider = JSON.parse(storageProvider);
+
+    state.account.storage.provider = {
+      id: storageProvider.name.toLowerCase(),
+      name: capitalizeFirstLetter(storageProvider.name),
+      website: storageProvider.website,
+      protocol: storageProvider.protocol,
+      gatewayUrl: storageProvider.gatewayUrl,
+      verifyUrl: storageProvider.verifyUrl,
+      apiKey: storageProvider.apiKey
+    };
+    localStorage.removeItem("storageProvider");
+  }
+
+  console.info("🧬 [STATE:Migrate] >>> ✅ App 'state' successfully migrated");
+} else {
+  console.info("🧬 [STATE:Check] >>> Version is up to date. No action required");
+}
 
 /** Parse and store user agent data */
 browser.set(Bowser.parse(window?.navigator.userAgent));
 
-/** Ensure the storage provider */
-async function ensureStorageProvider() {
-  if (!isEmpty(get(wallet)) && isEmpty(get(storageProvider))) {
-    const w = get(wallet);
-
-    await toast.promise(setupStorageProvider(w.publicKey, w.privateKey), {
-      loading: "Setting up a storage provider",
-      success: "Storage provider has been set up",
-      error: "Failed to setup storage provider"
-    });
+/** Initialize analytics */
+if (settings.privacy.analytics === true) {
+  if (!isEmpty(state.wallet) && state.wallet.anonymizedID) {
+    analytics.init(state.wallet.anonymizedID, settings.privacy.analytics, ANALYTICS_SERVICE);
   }
 }
 
@@ -37,31 +96,27 @@ if (isTelegramWebApp()) {
   // Expand app for better UX
   WebApp.expand();
 
-  // Show settings button
-/*  WebApp.SettingsButton.onClick(function() {
+  /*
+  Show settings button
+  WebApp.SettingsButton.onClick(function() {
     window.open("/settings");
   });
-  WebApp.SettingsButton.show();*/
+  WebApp.SettingsButton.show();
+  */
 
   // Request write access
   try {
     WebApp.requestWriteAccess(function(allowed) {
       if (allowed) {
-        console.info("⚙️ [REQUEST:Telegram Write Access] >>> Access granted 🟢");
+        console.info("📬 [TELEGRAM:Request write access] >>> Access granted 🟢");
       } else {
-        console.info("⚙️ [REQUEST:Telegram Write Access] >>> User declined the request 🛑");
+        console.info("📬 [TELEGRAM:Request write access] >>> User declined the request 🛑");
       }
     });
   } catch (e) {
-    console.error("⚙️ [REQUEST:Telegram Write Access] >>> Error processing request");
+    console.error("📬 [TELEGRAM:Request write access] >>> Error processing request");
   }
 }
 
-/** We need to make sure that the storage provider is set up */
-ensureStorageProvider();
-
 /** Monitor Telegram/Browser theme change */
 enableThemeSupport();
-
-/** Initialize Posthog analytics */
-//initPosthog();

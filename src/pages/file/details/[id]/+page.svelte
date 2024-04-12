@@ -22,10 +22,11 @@
   /** Lib imports */
   import { db } from "$lib/lib/db";
   import { uploadStatus } from "$lib/lib/enums/uploadStatus";
-  import { openLink } from "$lib/lib/utils";
+  import { openLink } from "$lib/lib/link";
   /** Component imports */
   import Image from "$lib/ui/image.svelte";
   import Confirm from "$lib/ui/modal/confirm.svelte";
+  import { analytics } from "$lib/lib/analytics/analytics.js";
 
 
   export let data;
@@ -41,8 +42,10 @@
 
 
   /** Copy it and go away */
-  const copySonic = (text, toastText, goBack = true) => {
+  const copySonic = (text, toastText, goBack = false) => {
     copyText(text).then(() => {
+      analytics.capture("file_shared", { via: "clipboard" });
+
       toast.success(toastText);
 
       if (goBack) {
@@ -158,7 +161,7 @@
       <button class="btn btn-neutral grow" on:click={() => openLink(data.url)}>
         <ExternalLink class="h-4 w-4" />Open
       </button>
-      <button class="btn btn-neutral grow" on:click={() => copySonic(data.cid, `SHARE`)}>
+      <button class="btn btn-neutral grow" on:click={() => goto("/file/share/" + data.id)}>
         <Share2 class="h-4 w-4" />Share
       </button>
     </div>

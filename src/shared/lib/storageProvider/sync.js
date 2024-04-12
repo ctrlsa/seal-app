@@ -5,10 +5,10 @@ import { nanoid } from "$lib/lib/nanoid";
 import { storageProviders } from "$lib/lib/enums/storageProviders"
 
 
+
 const storageProviderName = storageProviders.lighthouse.name;
 const storageProviderProtocol = storageProviders.lighthouse.protocol;
 const storageProviderGatewayUrl = storageProviders.lighthouse.gatewayUrl;
-
 
 export async function getUploadsCount(apiKey) {
   const uploads = await getUploads(apiKey);
@@ -16,7 +16,7 @@ export async function getUploadsCount(apiKey) {
   return uploads.data.totalFiles;
 }
 
-export async function syncUploads(apiKey){
+export async function sync(apiKey){
   const fileList = await getUploads(apiKey);
   //console.log(fileList.data.totalFiles);
 

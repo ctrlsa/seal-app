@@ -2,8 +2,9 @@
   import Settings from "svelte-lucide/Settings.svelte";
   import Wallet from "svelte-lucide/Wallet.svelte";
 
-  import { shortAddr } from "$shared/lib/utils";
-  import BackButton from "$shared/ui/button/back.svelte";
+  import { shortAddr } from "$lib/lib/string";
+
+  import BackButton from "$lib/ui/button/back.svelte";
 
 
   export let address="";
@@ -19,7 +20,7 @@
   </div>
   {#if address}
     <div class="navbar-end">
-      <a class="badge badge-neutral p-3 mt-1" href="/settings/wallet">
+      <a class="badge badge-neutral p-3 mt-1" href="/account/manage">
         <Wallet class="h-3.5 w-3.5 mr-1.5" />{shortAddr(address)}
       </a>
       <a class="btn btn-ghost p-3 px-1 ml-1" href="/settings">

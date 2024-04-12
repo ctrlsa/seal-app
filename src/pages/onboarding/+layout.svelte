@@ -1,13 +1,13 @@
 <script>
   import { isEmpty } from "moderndash";
-  import { get } from "svelte/store";
   import toast from "svelte-french-toast";
 
   import { goto } from "$app/navigation";
-  import { wallet } from "$lib/lib/stores/stores";
+  import { state } from "$lib/lib/stores/state";
 
 
-  if (!isEmpty(get(wallet))) {
+
+  if (!isEmpty(state.wallet)) {
     toast("User account already exists", { icon: '😨' });
     goto("/myfiles", { replaceState: true });
   }

@@ -19,8 +19,8 @@
   </div>
 
   <div class="flex flex-col mb-8 items-center justify-center">
-    <p class="text-center font-bold">----</p>
-    <div class="divider w-28 self-center mb-0.5 mt-1.5"></div>
-    <p class="text-center">---</p>
+    <p class="text-center font-bold">SEAL ver. 0.2.1</p>
+    <div class="divider w-28 self-center mb-0.5 mt-1"></div>
+    <p class="text-center">decentralized app</p>
   </div>
 </main>

@@ -1,5 +1,8 @@
-import { storageProvider } from "$lib/lib/stores/stores";
+import { state } from "$lib/lib/stores/state";
+
+
 
 export async function removeStorageProvider() {
-  await storageProvider.set({});
+  state.account.storage.info = { used: 0, limit: 0 };
+  state.account.storage.provider = {};
 }

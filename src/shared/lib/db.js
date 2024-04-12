@@ -1,9 +1,12 @@
 import Dexie from "dexie";
 
-Dexie.delete("Seal");
+import { DB_NAME } from "$lib/lib/constants";
 
-export const db = new Dexie("SealDB");
 
-db.version(1).stores({
-    files: "id, cid, pid, name, size, mimeType, status, encryption, created, updated, protocol, storageProvider, txHash, publicKey, url"
-});
+const _DB_SCHEMA = {
+    files: "id, cid, pid, name, size, mimeType, status, encryption, created, updated, protocol, storageProvider, txHash, publicKey, url",
+};
+
+export const db = new Dexie(DB_NAME);
+
+db.version(1).stores(_DB_SCHEMA);
